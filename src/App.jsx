@@ -1,4 +1,26 @@
-import "./App.css";
+import React from "react";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import Login from "./pages/Login";
+import Landing from "./pages/Landing";
+
 export default function App() {
-  return <h1 className="text-3xl font-bold underline">Hello world!</h1>;
+  return (
+    <Router>
+      <nav className="bg-gray-900">
+        <ul>
+          <li className="text-white">
+            <Link to="/">Accueil</Link>
+          </li>
+          <li className="text-white">
+            <Link to="/login">Login</Link>
+          </li>
+        </ul>
+      </nav>
+
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/Login" element={<Login />} />
+      </Routes>
+    </Router>
+  );
 }
