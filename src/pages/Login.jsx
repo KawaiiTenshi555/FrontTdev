@@ -1,6 +1,6 @@
 export default function Login() {
   return (
-    <div className="flex h-screen items-center justify-center bg-gray-800">
+    <div className="flex h-screen items-center justify-center bg-gray-600">
       <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-lg">
         <h2 className="text-2xl font-bold text-center text-gray-800">
           Connexion
