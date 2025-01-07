@@ -1,16 +1,13 @@
 // URL de base de l'API
-const BASE_URL = "https://api.exemple.com/v1";
-
-// Clé API (si nécessaire)
-const API_KEY = "votre_clé_api";
+const BASE_URL = "http://localhost:3000";
 
 // Fonction pour construire les headers
-const getHeaders = (isAuthenticated = false) => {
+const getHeaders = (isAuthenticated = false, token = null) => {
     const headers = {
         "Content-Type": "application/json",
     };
-    if (isAuthenticated) {
-        headers["Authorization"] = `Bearer ${API_KEY}`;
+    if (isAuthenticated && token) {
+        headers["Authorization"] = `Bearer ${token}`;
     }
     return headers;
 };
@@ -28,7 +25,7 @@ const login = async (username, password) => {
         }
         const data = await response.json();
         console.log("Login successful:", data);
-        return data;
+        return data.token;
     } catch (error) {
         console.error("Error during login:", error);
         throw error;
@@ -36,11 +33,11 @@ const login = async (username, password) => {
 };
 
 // Fonction générique pour récupérer des données
-const fetchData = async (endpoint, isAuthenticated = true) => {
+const fetchData = async (endpoint, token) => {
     try {
         const response = await fetch(`${BASE_URL}/${endpoint}`, {
             method: "GET",
-            headers: getHeaders(isAuthenticated),
+            headers: getHeaders(true, token),
         });
         if (!response.ok) {
             throw new Error(`Failed to fetch data: ${response.statusText}`);
@@ -54,10 +51,11 @@ const fetchData = async (endpoint, isAuthenticated = true) => {
     }
 };
 
+
 // (async () => {
 //     try {
-//         const loginData = await login("user@example.com", "securepassword");
-//         const userData = await fetchData("user/profile", true);
+//         const token = await login("user@example.com", "password");
+//         const userData = await fetchData("user/profile", token);
 //         console.log("User profile:", userData);
 //     } catch (error) {
 //         console.error("An error occurred:", error);
