@@ -1,26 +1,19 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Landing from "./pages/Landing";
 import StockManagementPage from "./pages/StockManagement";
+import Header from "./pages/Header";
 
 export default function App() {
   return (
     <Router>
-      <nav className="bg-gray-900">
-        <ul>
-          <li className="text-white">
-            <Link to="/">Accueil</Link>
-          </li>
-          <li className="text-white">
-            <Link to="/login">Login</Link>
-          </li>
-        </ul>
-      </nav>
+      <Header/>
+      <div className="pt-20"></div>
 
       <Routes>
         <Route path="/" element={<Landing />} />
-        <Route path="/Login" element={<Login />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/StockManagement" element={<StockManagementPage />} />
       </Routes>
     </Router>

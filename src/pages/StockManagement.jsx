@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { getProducts, delProduct, updateProduct } from '../Api'; // Import des fonctions API
+import { getProducts, deleteProduct, editProduct, addProduct } from '../Api';
+import StockTable from '../components/StockTable';
+import ProductModal from '../components/ProductModal';
 
-const StockManagementPage = () => {
+export default function StockManagementPage() {
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState(null);
 
   useEffect(() => {
-    // Charger les produits depuis l'API
     const fetchProducts = async () => {
       try {
         const data = await getProducts();
@@ -19,92 +22,106 @@ const StockManagementPage = () => {
     fetchProducts();
   }, []);
 
-  const handleDelete = async (productId) => {
-    try {
-      await delProduct(productId);
-      setProducts(products.filter((product) => product.id !== productId));
-    } catch (error) {
-      console.error('Erreur lors de la suppression du produit :', error);
-    }
+  const generateFakeProducts = () => {
+    const statuses = ['En stock', 'Rupture', 'En commande'];
+    const warehouses = ['Entrepôt A', 'Entrepôt B', 'Entrepôt C'];
+    
+    // Génère des produits fictifs
+    const products = Array.from({ length: 20 }).map((_, index) => ({
+      id: index + 1,
+      name: `Produit ${index + 1}`,
+      warehouse: warehouses[Math.floor(Math.random() * warehouses.length)],
+      status: statuses[Math.floor(Math.random() * statuses.length)],
+      price: (Math.random() * 100).toFixed(2), // Prix aléatoire entre 0 et 100€
+    }));
+    
+    return products;
   };
 
-  const handleUpdate = (productId) => {
-    console.log(`Modifier le produit avec ID : ${productId}`);
+  useEffect(() => {
+    const fakeProducts = generateFakeProducts();
+    setProducts(fakeProducts);
+  }, []);
+
+  const handleAddProduct = () => {
+    setEditingProduct(null);
+    setIsModalOpen(true);
   };
+
+  const handleEditProduct = (product) => {
+    setEditingProduct(product);
+    setIsModalOpen(true);
+  };
+
+  const handleSaveProduct = async (formData) => {
+    if (editingProduct) {
+      await editProduct(editingProduct.id, formData);
+    } else {
+      await addProduct(formData);
+    }
+    setIsModalOpen(false);
+    const data = await getProducts();
+    setProducts(data);
+  };
+
+  const handleDeleteProduct = async (productId) => {
+    await deleteProduct(productId);
+    const data = await getProducts();
+    setProducts(data);
+  };
+
 
   const filteredProducts = products.filter((product) =>
     product.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <header className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Gestion des stocks</h1>
-        <button className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
+    <div className="bg-stone-100 p-6">
+      <header className="flex justify-between items-center mb-6 px-8">
+        <div className="relative w-full mr-6">
+          <input
+            type="text"
+            placeholder="Rechercher"
+            className="w-full p-2 pl-4 pr-10 border border-stone-300 rounded-[22px]"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth="2"
+            stroke="currentColor"
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-stone-500"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M21 21l-4.35-4.35M10 18a8 8 0 100-16 8 8 0 000 16z"
+            />
+          </svg>
+        </div>
+        <button
+          onClick={handleAddProduct}
+          className="bg-stone-900 text-white py-2 px-6 rounded-[22px] hover:bg-stone-800 whitespace-nowrap"
+        >
           Ajouter un article +
         </button>
       </header>
 
-      <div className="mb-6">
-        <input
-          type="text"
-          placeholder="Rechercher"
-          className="w-full p-2 border border-gray-300 rounded"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </div>
 
-      <table className="w-full bg-white rounded shadow">
-        <thead className="bg-gray-200">
-          <tr>
-            <th className="text-left p-4">Nom produit</th>
-            <th className="text-left p-4">Entrepôt</th>
-            <th className="text-left p-4">Status</th>
-            <th className="text-left p-4">Prix</th>
-            <th className="text-left p-4">Modifier</th>
-            <th className="text-left p-4">Supprimer</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredProducts.map((product) => (
-            <tr key={product.id} className="border-t">
-              <td className="p-4">{product.name}</td>
-              <td className="p-4">{product.warehouse}</td>
-              <td
-                className={`p-4 font-bold ${
-                  product.status === 'En stock'
-                    ? 'text-green-500'
-                    : product.status === 'Rupture'
-                    ? 'text-red-500'
-                    : 'text-yellow-500'
-                }`}
-              >
-                {product.status}
-              </td>
-              <td className="p-4">{product.price}€</td>
-              <td className="p-4">
-                <button
-                  onClick={() => handleUpdate(product.id)}
-                  className="text-blue-500 hover:underline"
-                >
-                  Modifier
-                </button>
-              </td>
-              <td className="p-4">
-                <button
-                  onClick={() => handleDelete(product.id)}
-                  className="text-red-500 hover:underline"
-                >
-                  Supprimer
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+
+      <StockTable
+        products={filteredProducts}
+        onDelete={handleDeleteProduct}
+        onUpdate={handleEditProduct}
+      />
+      <ProductModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        product={editingProduct}
+        onSave={handleSaveProduct}
+      />
     </div>
   );
-};
-
-export default StockManagementPage;
+}
