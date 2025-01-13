@@ -187,19 +187,19 @@ const editProduct = async (id, productData, token) => {
     }
 };
 
-const delProduct = async (id, token) => {
+const deleteProduct = async (id, token) => {
     try {
         const response = await fetch(`${BASE_URL}/api/products/${id}`, {
             method: "DELETE",
             headers: getHeaders(token),
         });
         if (!response.ok) {
-            throw new Error(`delProduct failed: ${response.statusText}`);
+            throw new Error(`deleteProduct failed: ${response.statusText}`);
         }
         const data = await response.json();
         return data.message;
     } catch (error) {
-        console.error("Error during delProduct:", error);
+        console.error("Error during deleteProduct:", error);
         throw error;
     }
 };
@@ -307,4 +307,4 @@ const getConversionRate = async (token) => {
     }
 };
 
-export { login, getUser, getUsers, delUser, editUser, getProduct, getProducts, addProduct, delProduct, editProduct, updateProductStock, getAverageCartValue, getStockOutRate, getTopSellingProducts, getLowSellingProducts, getConversionRate};
+export { login, getUser, getUsers, delUser, editUser, getProduct, getProducts, addProduct, deleteProduct, editProduct, updateProductStock, getAverageCartValue, getStockOutRate, getTopSellingProducts, getLowSellingProducts, getConversionRate};
