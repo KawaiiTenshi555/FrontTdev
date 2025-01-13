@@ -307,22 +307,4 @@ const getConversionRate = async (token) => {
     }
 };
 
-
-const fetchData = async (endpoint, token) => {
-    try {
-        const response = await fetch(`${BASE_URL}/${endpoint}`, {
-            method: "GET",
-            headers: getHeaders(token),
-        });
-        if (!response.ok) {
-            throw new Error(`Failed to fetch data: ${response.statusText}`);
-        }
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error("Error fetching data:", error);
-        throw error;
-    }
-};
-
-export { login, getUser, getUsers, delUser, editUser, getProduct, getProducts, addProduct, delProduct, editProduct, fetchData };
+export { login, getUser, getUsers, delUser, editUser, getProduct, getProducts, addProduct, delProduct, editProduct, updateProductStock, getAverageCartValue, getStockOutRate, getTopSellingProducts, getLowSellingProducts, getConversionRate};
