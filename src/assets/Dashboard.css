@@ -1,0 +1,33 @@
+#main{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: column;
+    width: 100vw;
+    height: 100vh;
+}
+
+/* titre de la page dashboard */
+#main h1{
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'arial';
+    font-size: 2em;
+}
+
+/* où vont être les kpi */
+section{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    border:1px solid black;
+}
+
+section div{
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    padding: 10px;
+    border-radius: 10px;
+    margin: 10px;
+    flex-basis: 30%;
+    flex-grow: 1;
+    flex-shrink: 0; /*il garde sa taille lors du wrapping*/
+    text-align: center;
+}
