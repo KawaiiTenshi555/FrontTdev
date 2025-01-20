@@ -80,19 +80,19 @@ const addUser = async (token, user) => {
     }
 };
 
-const delUser = async (id, token) => {
+const deleteUser = async (id, token) => {
     try {
         const response = await fetch(`${BASE_URL}/api/user/${id}`, {
             method: "DELETE",
             headers: getHeaders(token),
         });
         if (!response.ok) {
-            throw new Error(`delUser failed: ${response.statusText}`);
+            throw new Error(`deleteUser failed: ${response.statusText}`);
         }
         const data = await response.json();
         return data.message;
     } catch (error) {
-        console.error("Error during delUser:", error);
+        console.error("Error during deleteUser:", error);
         throw error;
     }
 };
@@ -307,4 +307,4 @@ const getConversionRate = async (token) => {
     }
 };
 
-export { login, getUser, getUsers, delUser, editUser, getProduct, getProducts, addProduct, deleteProduct, editProduct, updateProductStock, getAverageCartValue, getStockOutRate, getTopSellingProducts, getLowSellingProducts, getConversionRate};
+export { login, getUser, getUsers, addUser, deleteUser, editUser, getProduct, getProducts, addProduct, deleteProduct, editProduct, updateProductStock, getAverageCartValue, getStockOutRate, getTopSellingProducts, getLowSellingProducts, getConversionRate};
