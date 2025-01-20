@@ -28,9 +28,9 @@ const Header = () => {
           Indicateurs de ventes
         </Link>
         <Link
-          to="/userClient"
+          to="/UserManagement"
           className={`flex-grow text-center py-4 text-white ${
-            location.pathname === "/userClient"
+            location.pathname === "/UserManagement"
               ? "bg-stone-900"
               : "bg-stone-800 hover:bg-stone-700"
           } focus:outline-none`}
