@@ -18,10 +18,9 @@ section{
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    border:1px solid black;
 }
 
-section div{
+section .kpi-div{
     box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
     padding: 10px;
     border-radius: 10px;
@@ -30,4 +29,14 @@ section div{
     flex-grow: 1;
     flex-shrink: 0; /*il garde sa taille lors du wrapping*/
     text-align: center;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    min-height: 20vh;
+}
+
+/* global */
+/* police nationale (la blague de l'année pour celui qui lis ça pitié j'en ai marre je suis pas dev front react j'ai pas touché depuis 12 mois voilà coup de gueule j'ai envie de dormir il est bientôt 23h #ripbozo)*/
+.font-size-3{
+    font-size: 1.2em;
 }
