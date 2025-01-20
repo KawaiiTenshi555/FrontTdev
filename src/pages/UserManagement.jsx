@@ -1,78 +1,77 @@
 import React, { useState, useEffect } from 'react';
-import { getProducts, deleteProduct, editProduct, addProduct } from '../Api';
-import StockTable from '../components/StockTable';
-import ProductModal from '../components/ProductModal';
+import { getUsers, deleteUser, editUser, addUser } from '../Api';
+import UserTable from '../components/UserTable';
+import UserModal from '../components/UserModal';
 
-export default function StockManagementPage() {
-  const [products, setProducts] = useState([]);
+export default function UserManagementPage() {
+  const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingProduct, setEditingProduct] = useState(null);
+  const [editingUser, setEditingUser] = useState(null);
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchUsers = async () => {
       try {
-        const data = await getProducts();
-        setProducts(data);
+        const data = await getUsers();
+        setUsers(data);
       } catch (error) {
-        console.error('Erreur lors du chargement des produits :', error);
+        console.error('Erreur lors du chargement des utilisateurs :', error);
       }
     };
 
-    fetchProducts();
+    fetchUsers();
   }, []);
 
-  const generateFakeProducts = () => {
-    const statuses = ['En stock', 'Rupture', 'En commande'];
-    const warehouses = ['Entrepôt A', 'Entrepôt B', 'Entrepôt C'];
-    
-    // Génère des produits fictifs
-    const products = Array.from({ length: 20 }).map((_, index) => ({
+  const generateFakeUsers = () => {
+    const roles = ['Admin', 'User', 'Manager'];
+    const statuses = ['Actif', 'Inactif'];
+
+    // Génère des utilisateurs fictifs
+    const users = Array.from({ length: 20 }).map((_, index) => ({
       id: index + 1,
-      name: `Produit ${index + 1}`,
-      warehouse: warehouses[Math.floor(Math.random() * warehouses.length)],
+      name: `Utilisateur ${index + 1}`,
+      email: `user${index + 1}@example.com`,
+      role: roles[Math.floor(Math.random() * roles.length)],
       status: statuses[Math.floor(Math.random() * statuses.length)],
-      price: (Math.random() * 100).toFixed(2), // Prix aléatoire entre 0 et 100€
     }));
-    
-    return products;
+
+    return users;
   };
 
   useEffect(() => {
-    const fakeProducts = generateFakeProducts();
-    setProducts(fakeProducts);
+    const fakeUsers = generateFakeUsers();
+    setUsers(fakeUsers);
   }, []);
 
-  const handleAddProduct = () => {
-    setEditingProduct(null);
+  const handleAddUser = () => {
+    setEditingUser(null);
     setIsModalOpen(true);
   };
 
-  const handleEditProduct = (product) => {
-    setEditingProduct(product);
+  const handleEditUser = (user) => {
+    setEditingUser(user);
     setIsModalOpen(true);
   };
 
-  const handleSaveProduct = async (formData) => {
-    if (editingProduct) {
-      await editProduct(editingProduct.id, formData);
+  const handleSaveUser = async (formData) => {
+    if (editingUser) {
+      await editUser(editingUser.id, formData);
     } else {
-      await addProduct(formData);
+      await addUser(formData);
     }
     setIsModalOpen(false);
-    const data = await getProducts();
-    setProducts(data);
+    const data = await getUsers();
+    setUsers(data);
   };
 
-  const handleDeleteProduct = async (productId) => {
-    await deleteProduct(productId);
-    const data = await getProducts();
-    setProducts(data);
+  const handleDeleteUser = async (userId) => {
+    await deleteUser(userId);
+    const data = await getUsers();
+    setUsers(data);
   };
 
-
-  const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredUsers = users.filter((user) =>
+    user.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -102,25 +101,23 @@ export default function StockManagementPage() {
           </svg>
         </div>
         <button
-          onClick={handleAddProduct}
+          onClick={handleAddUser}
           className="bg-stone-900 text-white py-2 px-6 rounded-[22px] hover:bg-stone-800 whitespace-nowrap"
         >
-          Ajouter un article +
+          Ajouter un utilisateur +
         </button>
       </header>
 
-
-
-      <StockTable
-        products={filteredProducts}
-        onDelete={handleDeleteProduct}
-        onUpdate={handleEditProduct}
+      <UserTable
+        users={filteredUsers}
+        onDelete={handleDeleteUser}
+        onUpdate={handleEditUser}
       />
-      <ProductModal
+      <UserModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        product={editingProduct}
-        onSave={handleSaveProduct}
+        user={editingUser}
+        onSave={handleSaveUser}
       />
     </div>
   );
