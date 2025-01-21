@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-const UserModal = ({ isOpen, onClose, user, onSave }) => {
+const UserModal = ({ isOpen, onClose, user, onSave, token }) => {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -12,6 +12,9 @@ const UserModal = ({ isOpen, onClose, user, onSave }) => {
     city: "",
     country: "France",
   });
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (user) {
@@ -37,9 +40,20 @@ const UserModal = ({ isOpen, onClose, user, onSave }) => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSave(formData);
+    setLoading(true);
+    setError(null);
+    try {
+      const message = await onSave(token, formData);
+      console.log("Utilisateur ajouté avec succès :", message);
+      onClose();
+    } catch (err) {
+      setError(err.message || "Une erreur est survenue.");
+      console.error("Erreur lors de l'ajout de l'utilisateur :", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (!isOpen) return null;
@@ -71,6 +85,7 @@ const UserModal = ({ isOpen, onClose, user, onSave }) => {
               required
             />
           </div>
+
           <div className="flex gap-4">
             <input
               type="email"
@@ -91,6 +106,7 @@ const UserModal = ({ isOpen, onClose, user, onSave }) => {
               required={!user}
             />
           </div>
+
           <div>
             <input
               type="text"
@@ -101,6 +117,7 @@ const UserModal = ({ isOpen, onClose, user, onSave }) => {
               className="w-full p-3 bg-stone-700 border border-stone-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-stone-400"
             />
           </div>
+
           <div>
             <input
               type="text"
@@ -142,7 +159,9 @@ const UserModal = ({ isOpen, onClose, user, onSave }) => {
               <option value="Canada">Canada</option>
             </select>
           </div>
-          <div className="flex justify-between">
+
+          <div className="flex justify-between items-center">
+            {error && <p className="text-red-500">{error}</p>}
             <button
               type="button"
               onClick={() => {
@@ -166,8 +185,9 @@ const UserModal = ({ isOpen, onClose, user, onSave }) => {
             <button
               type="submit"
               className="bg-stone-500 text-white py-2 px-6 rounded-full hover:bg-stone-400"
+              disabled={loading}
             >
-              {user ? "Modifier" : "Créer"}
+              {loading ? "Chargement..." : user ? "Modifier" : "Créer"}
             </button>
           </div>
         </form>
