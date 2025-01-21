@@ -1,21 +1,23 @@
 const BASE_URL = "http://localhost:3000";
 
-const getHeaders = (token = null) => {
+const getHeaders = () => {
+    const token = localStorage.getItem("jwt_token");
     const headers = {
         "Content-Type": "application/json",
     };
     if (token) {
-        headers["Authorization"] = `Bearer ${token}`;
+        headers["x-auth-token"] = token;
     }
     return headers;
 };
 
-const login = async (username, password) => {
+
+const login = async (email, password) => {
     try {
         const response = await fetch(`${BASE_URL}/api/user/login`, {
             method: "POST",
             headers: getHeaders(),
-            body: JSON.stringify({ username, password }),
+            body: JSON.stringify({ email, password }),
         });
         if (!response.ok) {
             throw new Error(`Login failed: ${response.statusText}`);
@@ -32,7 +34,7 @@ const getUsers = async (token) => {
     try {
         const response = await fetch(`${BASE_URL}/api/users`, {
             method: "GET",
-            headers: getHeaders(token),
+            headers: getHeaders(),
         });
         if (!response.ok) {
             throw new Error(`getUsers failed: ${response.statusText}`);
@@ -49,7 +51,7 @@ const getUser = async (id, token) => {
     try {
         const response = await fetch(`${BASE_URL}/api/user/${id}`, {
             method: "GET",
-            headers: getHeaders(token),
+            headers: getHeaders(),
         });
         if (!response.ok) {
             throw new Error(`getUser failed: ${response.statusText}`);
@@ -66,7 +68,7 @@ const addUser = async (token, user) => {
     try {
         const response = await fetch(`${BASE_URL}/api/user/${id}`, {
             method: "POST",
-            headers: getHeaders(token),
+            headers: getHeaders(),
             body: JSON.stringify({ user }),
         });
         if (!response.ok) {
@@ -84,7 +86,7 @@ const deleteUser = async (id, token) => {
     try {
         const response = await fetch(`${BASE_URL}/api/user/${id}`, {
             method: "DELETE",
-            headers: getHeaders(token),
+            headers: getHeaders(),
         });
         if (!response.ok) {
             throw new Error(`deleteUser failed: ${response.statusText}`);
@@ -101,7 +103,7 @@ const editUser = async (id, token, user) => {
     try {
         const response = await fetch(`${BASE_URL}/api/user/${id}`, {
             method: "PUT",
-            headers: getHeaders(token),
+            headers: getHeaders(),
             body: JSON.stringify({ user }),
         });
         if (!response.ok) {
@@ -120,7 +122,7 @@ const getProducts = async (token, params = {}) => {
         const queryString = new URLSearchParams(params).toString();
         const response = await fetch(`${BASE_URL}/api/products?${queryString}`, {
             method: "GET",
-            headers: getHeaders(token),
+            headers: getHeaders(),
         });
         if (!response.ok) {
             throw new Error(`getProducts failed: ${response.statusText}`);
@@ -138,7 +140,7 @@ const getProduct = async (id, token) => {
     try {
         const response = await fetch(`${BASE_URL}/api/products/${id}`, {
             method: "GET",
-            headers: getHeaders(token),
+            headers: getHeaders(),
         });
         if (!response.ok) {
             throw new Error(`getProduct failed: ${response.statusText}`);
@@ -155,7 +157,7 @@ const addProduct = async (productData, token) => {
     try {
         const response = await fetch(`${BASE_URL}/api/products`, {
             method: "POST",
-            headers: getHeaders(token),
+            headers: getHeaders(),
             body: JSON.stringify(productData),
         });
         if (!response.ok) {
@@ -173,7 +175,7 @@ const editProduct = async (id, productData, token) => {
     try {
         const response = await fetch(`${BASE_URL}/api/products/${id}`, {
             method: "PUT",
-            headers: getHeaders(token),
+            headers: getHeaders(),
             body: JSON.stringify(productData),
         });
         if (!response.ok) {
@@ -191,7 +193,7 @@ const deleteProduct = async (id, token) => {
     try {
         const response = await fetch(`${BASE_URL}/api/products/${id}`, {
             method: "DELETE",
-            headers: getHeaders(token),
+            headers: getHeaders(),
         });
         if (!response.ok) {
             throw new Error(`deleteProduct failed: ${response.statusText}`);
@@ -208,7 +210,7 @@ const updateProductStock = async (id, stockData, token) => {
     try {
         const response = await fetch(`${BASE_URL}/api/products/${id}/stock`, {
             method: "PATCH",
-            headers: getHeaders(token),
+            headers: getHeaders(),
             body: JSON.stringify(stockData),
         });
         if (!response.ok) {
@@ -226,7 +228,7 @@ const getAverageCartValue = async (token) => {
     try {
         const response = await fetch(`${BASE_URL}/api/kpi/average-cart-value`, {
             method: "GET",
-            headers: getHeaders(token),
+            headers: getHeaders(),
         });
         if (!response.ok) {
             throw new Error(`getAverageCartValue failed: ${response.statusText}`);
@@ -243,7 +245,7 @@ const getStockOutRate = async (token) => {
     try {
         const response = await fetch(`${BASE_URL}/api/kpi/stock-out-rate`, {
             method: "GET",
-            headers: getHeaders(token),
+            headers: getHeaders(),
         });
         if (!response.ok) {
             throw new Error(`getStockOutRate failed: ${response.statusText}`);
@@ -260,7 +262,7 @@ const getTopSellingProducts = async (token, limit = 10) => {
     try {
         const response = await fetch(`${BASE_URL}/api/kpi/top-selling-products?limit=${limit}`, {
             method: "GET",
-            headers: getHeaders(token),
+            headers: getHeaders(),
         });
         if (!response.ok) {
             throw new Error(`getTopSellingProducts failed: ${response.statusText}`);
@@ -277,7 +279,7 @@ const getLowSellingProducts = async (token, limit = 10) => {
     try {
         const response = await fetch(`${BASE_URL}/api/kpi/low-selling-products?limit=${limit}`, {
             method: "GET",
-            headers: getHeaders(token),
+            headers: getHeaders(),
         });
         if (!response.ok) {
             throw new Error(`getLowSellingProducts failed: ${response.statusText}`);
@@ -294,7 +296,7 @@ const getConversionRate = async (token) => {
     try {
         const response = await fetch(`${BASE_URL}/api/kpi/conversion-rate`, {
             method: "GET",
-            headers: getHeaders(token),
+            headers: getHeaders(),
         });
         if (!response.ok) {
             throw new Error(`getConversionRate failed: ${response.statusText}`);
