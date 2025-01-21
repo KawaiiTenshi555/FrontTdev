@@ -5,6 +5,7 @@ import Landing from "./pages/Landing";
 import StockManagementPage from "./pages/StockManagement";
 import UserManagementPage from "./pages/UserManagement";
 import Header from "./pages/Header";
+import Dashboard from "./pages/Dashboard";
 
 export default function App() {
   return (
@@ -17,6 +18,7 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/StockManagement" element={<StockManagementPage />} />
         <Route path="/UserManagement" element={<UserManagementPage />} />
+        <Route path="/KPI" element={<Dashboard />} />
       </Routes>
     </Router>
   );
