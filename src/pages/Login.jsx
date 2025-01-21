@@ -1,24 +1,65 @@
+import { useState, useEffect } from "react";
+import { login } from '../Api.js';
+
 export default function Login() {
+  // Récupère les informations en local si existantes.
+  const [email, setEmail] = useState(() => {
+    return localStorage.getItem("email") || "";
+  });
+
+  const [password, setPassword] = useState(() => {
+    return localStorage.getItem("password") || "";
+  });
+
+  const [loading, setLoading] = useState(false);
+
+  // Fonction d'envoi du formulaire
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    setLoading(true);
+
+    try {
+      const token = await login(email, password);
+      localStorage.setItem("email", email);
+      localStorage.setItem("jwt_token", token);
+
+      // Logique supplémentaire après connexion réussie
+      console.log("Connexion réussie, token:", token);
+    } catch (err) {
+      console.error("Erreur de connexion:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Suppression de l'enregistrement du Mot de Passe sur changement de page
+  useEffect(() => {
+    setPassword("");
+  }, []);
+
   return (
-    <div className="flex h-screen items-center justify-center bg-gray-800">
+    <div className="flex h-screen items-center justify-center bg-gray-200">
       <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-lg">
         <h2 className="text-2xl font-bold text-center text-gray-800">
           Connexion
         </h2>
-        <form className="space-y-4">
+        <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
             <label
-              htmlFor="username"
+              htmlFor="email"
               className="block text-sm font-medium text-gray-700"
             >
               Nom d'utilisateur
             </label>
             <input
               type="text"
-              id="username"
-              name="username"
+              id="email"
+              name="email"
               className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
               placeholder="Entrez votre nom d'utilisateur"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div>
@@ -34,6 +75,8 @@ export default function Login() {
               name="password"
               className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
               placeholder="Entrez votre mot de passe"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
           <button
