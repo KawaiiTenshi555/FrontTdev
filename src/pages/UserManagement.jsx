@@ -25,8 +25,6 @@ export default function UserManagementPage() {
   const generateFakeUsers = () => {
     const roles = ['Admin', 'User', 'Manager'];
     const statuses = ['Actif', 'Inactif'];
-
-    // Génère des utilisateurs fictifs
     const users = Array.from({ length: 20 }).map((_, index) => ({
       id: index + 1,
       name: `Utilisateur ${index + 1}`,

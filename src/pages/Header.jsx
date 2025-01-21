@@ -2,7 +2,7 @@ import React from "react";
 import { Link, useLocation } from 'react-router-dom';
 
 const Header = () => {
-  const location = useLocation();  // Get the current route
+  const location = useLocation();
 
   return (
     <header className="fixed top-0 left-0 w-full z-50">
