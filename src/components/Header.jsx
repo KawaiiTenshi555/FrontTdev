@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation } from "react-router-dom";
 
 const Header = () => {
   const location = useLocation();
@@ -26,6 +26,16 @@ const Header = () => {
           } focus:outline-none`}
         >
           Indicateurs de ventes
+        </Link>
+        <Link
+          to="/Command"
+          className={`flex-grow text-center py-4 text-white ${
+            location.pathname === "/Command"
+              ? "bg-stone-900"
+              : "bg-stone-800 hover:bg-stone-700"
+          } focus:outline-none`}
+        >
+          Commandes
         </Link>
         <Link
           to="/UserManagement"
