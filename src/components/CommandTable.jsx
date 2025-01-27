@@ -10,7 +10,7 @@ const CommandTable = ({ commands, onDelete, onUpdate, onPending }) => {
           <th className="p-4 text-left">Mail du client</th>
           <th className="p-4 text-left">Montant de commande</th>
           <th className="p-4 text-left">Statut</th>
-          <th className="p-4 text-left">Modifier</th>
+          <th className="p-4 text-left">Détails</th>
           <th className="p-4 text-left">Supprimer</th>
           <th className="p-4 text-left">Annuler la commande</th>
         </tr>
