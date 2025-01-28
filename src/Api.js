@@ -440,7 +440,7 @@ const getConversionRate = async () => {
 };
 const getProductByName = async (name) => {
   console.log("getProductByName :", name);
-
+  
   try {
     const response = await fetch(
       `${BASE_URL}/api/product/getProductsByName?productName=${name}`,
@@ -459,6 +459,44 @@ const getProductByName = async (name) => {
     throw error;
   }
 };
+
+const getKpi = async (endpoint) => {
+  try {
+      const response = await fetch(`${BASE_URL}/api/kpi/${endpoint}`, {
+          method: "GET",
+          headers: getHeaders(true),
+      });
+      if (!response.ok) {
+          throw new Error(`${endpoint} failed: ${response.statusText}`);
+      }
+      const data = await response.json();
+      return data.message;
+  } catch (error) {
+      console.error(`Error during ${endpoint}:`, error);
+      throw error;
+  }
+};
+
+const fetchAverageBasketValue = async () => {
+  return await getKpi("orderAvg");
+};
+
+const fetchStockOutRate = async () => {
+  return await getKpi("outOfStockPercentage");
+};
+
+const fetchConversionRate = async () => {
+  return await getKpi("txConv");
+};
+
+const fetchTopSellingProducts = async () => {
+  return await getKpi("moreSold");
+};
+
+const fetchLeastSellingProducts = async () => {
+  return await getKpi("lessSold");
+};
+
 
 export {
   login,
@@ -480,4 +518,9 @@ export {
   getLowSellingProducts,
   getConversionRate,
   getProductByName,
+  fetchAverageBasketValue,
+  fetchStockOutRate,
+  fetchConversionRate,
+  fetchTopSellingProducts,
+  fetchLeastSellingProducts,
 };
