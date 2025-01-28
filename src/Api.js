@@ -178,7 +178,7 @@ const editUser = async (user) => {
 const getProducts = async (params = {}) => {
   try {
     const queryString = new URLSearchParams(params).toString();
-    const response = await fetch(`${BASE_URL}/api/products?${queryString}`, {
+    const response = await fetch(`${BASE_URL}/api/product/getProducts`, {
       method: "GET",
       headers: getHeaders(true), // Inclure le token si nécessaire
     });
