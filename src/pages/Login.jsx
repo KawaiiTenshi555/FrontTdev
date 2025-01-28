@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { login } from '../Api.js';
+import { login } from "../Api.js";
 
 export default function Login() {
   // Récupère les informations en local si existantes.
@@ -7,17 +7,17 @@ export default function Login() {
     return localStorage.getItem("email") || "";
   });
 
-  const [password, setPassword] = useState(() => {
-    return localStorage.getItem("password") || "";
-  });
+  const [password, setPassword] = useState("");
 
   const [loading, setLoading] = useState(false);
 
-  // Fonction d'envoi du formulaire
+  const [errorMessage, setErrorMessage] = useState("");
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     setLoading(true);
+    setErrorMessage("");
 
     try {
       const token = await login(email, password);
@@ -27,11 +27,13 @@ export default function Login() {
       // Logique supplémentaire après connexion réussie
       console.log("Connexion réussie, token:", token);
     } catch (err) {
-      console.error("Erreur de connexion:", err);
+      setErrorMessage(err.message);
     } finally {
       setLoading(false);
     }
   };
+
+  // In your JSX, display the error message
 
   // Suppression de l'enregistrement du Mot de Passe sur changement de page
   useEffect(() => {
@@ -50,14 +52,14 @@ export default function Login() {
               htmlFor="email"
               className="block text-sm font-medium text-gray-700"
             >
-              Nom d'utilisateur
+              Adresse Email
             </label>
             <input
-              type="text"
+              type="email"
               id="email"
               name="email"
               className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Entrez votre nom d'utilisateur"
+              placeholder="Entrez votre adresse email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />

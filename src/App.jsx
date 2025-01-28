@@ -7,6 +7,7 @@ import UserManagementPage from "./pages/UserManagement";
 import Header from "./components/Header";
 import Dashboard from "./pages/Dashboard";
 import Command from "./pages/Command";
+import Profile from "./pages/Profile";
 
 export default function App() {
   return (
@@ -21,6 +22,7 @@ export default function App() {
         <Route path="/UserManagement" element={<UserManagementPage />} />
         <Route path="/KPI" element={<Dashboard />} />
         <Route path="/Command" element={<Command />} />
+        <Route path="/Profile" element={<Profile />} />
       </Routes>
     </Router>
   );
