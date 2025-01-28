@@ -188,7 +188,7 @@ const getProducts = async (params = {}) => {
       );
     }
     const data = await response.json();
-    return data.products;
+    return data.message;
   } catch (error) {
     console.error("Erreur lors de la récupération des produits :", error);
     throw error;
