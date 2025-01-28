@@ -22,25 +22,6 @@ export default function UserManagementPage() {
     fetchUsers();
   }, []);
 
-  const generateFakeUsers = () => {
-    const roles = ['Admin', 'User', 'Manager'];
-    const statuses = ['Actif', 'Inactif'];
-    const users = Array.from({ length: 20 }).map((_, index) => ({
-      id: index + 1,
-      name: `Utilisateur ${index + 1}`,
-      email: `user${index + 1}@example.com`,
-      role: roles[Math.floor(Math.random() * roles.length)],
-      status: statuses[Math.floor(Math.random() * statuses.length)],
-    }));
-
-    return users;
-  };
-
-  useEffect(() => {
-    const fakeUsers = generateFakeUsers();
-    setUsers(fakeUsers);
-  }, []);
-
   const handleAddUser = () => {
     setEditingUser(null);
     setIsModalOpen(true);
@@ -52,16 +33,25 @@ export default function UserManagementPage() {
   };
 
   const handleSaveUser = async (formData) => {
-    if (editingUser) {
-      await editUser(editingUser.id, formData);
-    } else {
-      await addUser(formData);
+    console.log('formData', formData);
+    
+    try {
+      if (editingUser) {
+        await editUser(editingUser.id, formData);
+        console.log('Utilisateur modifié avec succès');
+      } else {
+        await addUser(formData);
+        console.log('Utilisateur ajouté avec succès');
+      }
+      const data = await getUsers();
+      setUsers(data);
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error("Erreur lors de la sauvegarde de l'utilisateur :", error.message);
+      throw error;
     }
-    setIsModalOpen(false);
-    const data = await getUsers();
-    setUsers(data);
   };
-
+  
   const handleDeleteUser = async (userId) => {
     await deleteUser(userId);
     const data = await getUsers();
@@ -69,7 +59,7 @@ export default function UserManagementPage() {
   };
 
   const filteredUsers = users.filter((user) =>
-    user.name.toLowerCase().includes(searchTerm.toLowerCase())
+    user.firstName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (

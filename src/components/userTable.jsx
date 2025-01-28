@@ -6,9 +6,10 @@ const UserTable = ({ users, onDelete, onUpdate }) => {
     <table className="w-full bg-stone-800 text-white rounded-lg shadow-lg overflow-hidden">
       <thead className="bg-stone-900">
         <tr>
+          <th className="p-4 text-left">Prenom</th>
           <th className="p-4 text-left">Nom</th>
           <th className="p-4 text-left">Email</th>
-          <th className="p-4 text-left">Rôle</th>
+          <th className="p-4 text-left">Téléphone</th>
           <th className="p-4 text-left">Statut</th>
           <th className="p-4 text-left">Modifier</th>
           <th className="p-4 text-left">Supprimer</th>
@@ -20,17 +21,18 @@ const UserTable = ({ users, onDelete, onUpdate }) => {
             key={user.id}
             className="border-t border-stone-700 hover:bg-stone-700"
           >
-            <td className="p-4">{user.name}</td>
+            <td className="p-4">{user.firstName}</td>
+            <td className="p-4">{user.lastName}</td>
             <td className="p-4">{user.email}</td>
-            <td className="p-4">{user.role}</td>
+            <td className="p-4">{user.phone}</td>
             <td
               className={`p-4 font-bold ${
-                user.status === 'Actif'
+                user.isAdmin
                   ? 'text-green-400'
                   : 'text-red-500'
               }`}
             >
-              {user.status}
+              {user.isAdmin ? 'Admin' : 'Client'}
             </td>
             <td className="p-4">
               <button
