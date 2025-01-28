@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-const UserModal = ({ isOpen, onClose, user, onSave, token }) => {
+const UserModal = ({ isOpen, onClose, user, onSave }) => {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -44,17 +44,27 @@ const UserModal = ({ isOpen, onClose, user, onSave, token }) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+  
+    // Déterminer les champs modifiés
+    const modifiedFields = {};
+    Object.keys(formData).forEach((key) => {
+      if (formData[key] !== (user ? user[key] || "" : "")) {
+        modifiedFields[key] = formData[key];
+      }
+    });
+  
     try {
-      const message = await onSave(token, formData);
-      console.log("Utilisateur ajouté avec succès :", message);
-      onClose();
+      // Appeler la fonction `onSave` avec uniquement les champs modifiés
+      await onSave(modifiedFields);
+      onClose();s
     } catch (err) {
       setError(err.message || "Une erreur est survenue.");
-      console.error("Erreur lors de l'ajout de l'utilisateur :", err);
+      console.error("Erreur lors de l'ajout/modification de l'utilisateur :", err);
     } finally {
       setLoading(false);
     }
   };
+  
 
   if (!isOpen) return null;
 

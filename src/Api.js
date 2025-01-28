@@ -63,7 +63,7 @@ const getCurrentUser = async () => {
 // Fonction pour obtenir tous les utilisateurs
 const getUsers = async () => {
   try {
-    const response = await fetch(`${BASE_URL}/api/users`, {
+    const response = await fetch(`${BASE_URL}/api/user`, {
       method: "GET",
       headers: getHeaders(true), // Inclure le token si nécessaire
     });
@@ -73,29 +73,10 @@ const getUsers = async () => {
       );
     }
     const data = await response.json();
-    return data.users;
+
+    return data;
   } catch (error) {
     console.error("Erreur lors de la récupération des utilisateurs :", error);
-    throw error;
-  }
-};
-
-// Fonction pour obtenir un utilisateur spécifique par ID
-const getUser = async (id) => {
-  try {
-    const response = await fetch(`${BASE_URL}/api/user/${id}`, {
-      method: "GET",
-      headers: getHeaders(true), // Inclure le token si nécessaire
-    });
-    if (!response.ok) {
-      throw new Error(
-        `Échec de la récupération de l'utilisateur : ${response.statusText}`,
-      );
-    }
-    const data = await response.json();
-    return data.user;
-  } catch (error) {
-    console.error("Erreur lors de la récupération de l'utilisateur :", error);
     throw error;
   }
 };
@@ -105,7 +86,7 @@ const addUser = async (user) => {
   try {
     const response = await fetch(`${BASE_URL}/api/user/signup`, {
       method: "POST",
-      headers: getHeaders(false), // Généralement, l'inscription ne nécessite pas de token
+      headers: getHeaders(false),
       body: JSON.stringify(user),
     });
     const data = await response.json();
@@ -149,9 +130,9 @@ const deleteUser = async (id) => {
 };
 
 // Edit user
-const editUser = async (formData) => {
+const editUser = async (id, formData) => {
   try {
-    const response = await fetch(`${BASE_URL}/api/user/update`, {
+    const response = await fetch(`${BASE_URL}/api/user/updateWithId?id=${id}`, {
       method: "PATCH",
       headers: getHeaders(true),
       body: JSON.stringify(formData),
@@ -502,7 +483,6 @@ export {
   login,
   getCurrentUser,
   getUsers,
-  getUser,
   addUser,
   deleteUser,
   editUser,
