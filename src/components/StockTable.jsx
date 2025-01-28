@@ -21,17 +21,21 @@ const StockTable = ({ products, onDelete, onUpdate }) => {
             className="border-t border-stone-700 hover:bg-stone-700"
           >
             <td className="p-4">{product.name}</td>
-            <td className="p-4">{product.warehouse}</td>
+            <td className="p-4">{product.stock[0].warehouse}</td>
             <td
               className={`p-4 font-bold ${
-                product.status === 'En stock'
+                product.stock[0].quantity > 0
                   ? 'text-green-400'
-                  : product.status === 'Rupture'
+                  : product.stock[0].quantity <= 0
                   ? 'text-red-500'
                   : 'text-yellow-400'
               }`}
             >
-              {product.status}
+              {product.stock[0].quantity > 0 ? (
+                "En stock"
+                ) : (
+                  "Rupture"
+                )}
             </td>
             <td className="p-4">{product.price}€</td>
             <td className="p-4">
