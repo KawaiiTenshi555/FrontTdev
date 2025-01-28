@@ -1,33 +1,32 @@
 const BASE_URL = "http://localhost:3000";
 
 const getHeaders = () => {
-    const token = localStorage.getItem("jwt_token");
-    const headers = {
-        "Content-Type": "application/json",
-    };
-    if (token) {
-        headers["x-auth-token"] = token;
-    }
-    return headers;
+  const token = localStorage.getItem("jwt_token");
+  const headers = {
+    "Content-Type": "application/json",
+  };
+  if (token) {
+    headers["x-auth-token"] = token;
+  }
+  return headers;
 };
 
-
 const login = async (email, password) => {
-    try {
-        const response = await fetch(`${BASE_URL}/api/user/login`, {
-            method: "POST",
-            headers: getHeaders(),
-            body: JSON.stringify({ email, password }),
-        });
-        if (!response.ok) {
-            throw new Error(`Login failed: ${response.statusText}`);
-        }
-        const data = await response.json();
-        return data.token;
-    } catch (error) {
-        console.error("Error during login:", error);
-        throw error;
+  try {
+    const response = await fetch(`${BASE_URL}/api/user/login`, {
+      method: "POST",
+      headers: getHeaders(),
+      body: JSON.stringify({ email, password }),
+    });
+    if (!response.ok) {
+      throw new Error(`Login failed: ${response.statusText}`);
     }
+    const data = await response.json();
+    return data.token;
+  } catch (error) {
+    console.error("Error during login:", error);
+    throw error;
+  }
 };
 
 const getUsers = async () => {
@@ -45,6 +44,13 @@ const getUsers = async () => {
         console.error("Error during getUsers:", error);
         throw error;
     }
+    // Le backend renvoie l'objet `currentUser` directement (sans enveloppe "user")
+    const userData = await response.json();
+    return userData;
+  } catch (error) {
+    console.error("Error during getCurrentUser:", error);
+    throw error;
+  }
 };
 
 const getUser = async (id) => {
@@ -62,6 +68,12 @@ const getUser = async (id) => {
         console.error("Error during getUser:", error);
         throw error;
     }
+    const data = await response.json();
+    return data.users;
+  } catch (error) {
+    console.error("Error during getUsers:", error);
+    throw error;
+  }
 };
 
 const addUser = async (user) => {
@@ -80,6 +92,12 @@ const addUser = async (user) => {
         console.error("Error during addUser:", error);
         throw error;
     }
+    const data = await response.json();
+    return data.user;
+  } catch (error) {
+    console.error("Error during getUser:", error);
+    throw error;
+  }
 };
 
 const deleteUser = async (id) => {
@@ -97,6 +115,12 @@ const deleteUser = async (id) => {
         console.error("Error during deleteUser:", error);
         throw error;
     }
+    const data = await response.json();
+    return data.message;
+  } catch (error) {
+    console.error("Error during addUser:", error);
+    throw error;
+  }
 };
 
 const editUser = async (id, user) => {
@@ -115,6 +139,12 @@ const editUser = async (id, user) => {
         console.error("Error during editUser:", error);
         throw error;
     }
+    const data = await response.json();
+    return data.message;
+  } catch (error) {
+    console.error("Error during deleteUser:", error);
+    throw error;
+  }
 };
 
 const getProducts = async () => {
@@ -136,6 +166,12 @@ const getProducts = async () => {
         console.error("Error during getProducts:", error);
         throw error;
     }
+    const data = await response.json();
+    return data.message;
+  } catch (error) {
+    console.error("Error during editUser:", error);
+    throw error;
+  }
 };
 
 const getCategorys = async () => {
@@ -157,6 +193,14 @@ const getCategorys = async () => {
         console.error("Error during getCategorys:", error);
         throw error;
     }
+    const data = await response.json();
+    const products = data.message;
+
+    return products;
+  } catch (error) {
+    console.error("Error during getProducts:", error);
+    throw error;
+  }
 };
 
 const getProductByName = async (name) => {
@@ -194,6 +238,14 @@ const addProduct = async (productData) => {
         console.error("Error during addProduct:", error);
         throw error;
     }
+    const data = await response.json();
+    const products = data.message;
+
+    return products;
+  } catch (error) {
+    console.error("Error during getCategorys:", error);
+    throw error;
+  }
 };
 
 const editProduct = async (id, productData) => {
@@ -213,6 +265,12 @@ const editProduct = async (id, productData) => {
         console.error("Error during editProduct:", error);
         throw error;
     }
+    const data = await response.json();
+    return data.message;
+  } catch (error) {
+    console.error("Error during getProductByName:", error);
+    throw error;
+  }
 };
 
 const deleteProduct = async (id) => {
@@ -230,6 +288,12 @@ const deleteProduct = async (id) => {
         console.error("Error during deleteProduct:", error);
         throw error;
     }
+    const data = await response.json();
+    return data.message;
+  } catch (error) {
+    console.error("Error during addProduct:", error);
+    throw error;
+  }
 };
 
 const updateProductStock = async (id, stockData) => {
@@ -248,6 +312,13 @@ const updateProductStock = async (id, stockData) => {
         console.error("Error during updateProductStock:", error);
         throw error;
     }
+    const data = await response.json();
+    console.log(data);
+    return data.message;
+  } catch (error) {
+    console.error("Error during editProduct:", error);
+    throw error;
+  }
 };
 
 const getAverageCartValue = async () => {
@@ -265,6 +336,12 @@ const getAverageCartValue = async () => {
         console.error("Error during getAverageCartValue:", error);
         throw error;
     }
+    const data = await response.json();
+    return data.message;
+  } catch (error) {
+    console.error("Error during deleteProduct:", error);
+    throw error;
+  }
 };
 
 const getStockOutRate = async () => {
@@ -282,6 +359,12 @@ const getStockOutRate = async () => {
         console.error("Error during getStockOutRate:", error);
         throw error;
     }
+    const data = await response.json();
+    return data.message;
+  } catch (error) {
+    console.error("Error during updateProductStock:", error);
+    throw error;
+  }
 };
 
 const getTopSellingProducts = async (limit = 10) => {
@@ -299,6 +382,12 @@ const getTopSellingProducts = async (limit = 10) => {
         console.error("Error during getTopSellingProducts:", error);
         throw error;
     }
+    const data = await response.json();
+    return data.averageCartValue;
+  } catch (error) {
+    console.error("Error during getAverageCartValue:", error);
+    throw error;
+  }
 };
 
 const getLowSellingProducts = async (limit = 10) => {
@@ -316,6 +405,12 @@ const getLowSellingProducts = async (limit = 10) => {
         console.error("Error during getLowSellingProducts:", error);
         throw error;
     }
+    const data = await response.json();
+    return data.stockOutRate;
+  } catch (error) {
+    console.error("Error during getStockOutRate:", error);
+    throw error;
+  }
 };
 
 const getConversionRate = async () => {
@@ -333,6 +428,68 @@ const getConversionRate = async () => {
         console.error("Error during getConversionRate:", error);
         throw error;
     }
+    const data = await response.json();
+    return data.topProducts;
+  } catch (error) {
+    console.error("Error during getTopSellingProducts:", error);
+    throw error;
+  }
 };
 
-export { login, getUser, getUsers, addUser, deleteUser, editUser, getProducts, getCategorys, getProductByName, addProduct, deleteProduct, editProduct, updateProductStock, getAverageCartValue, getStockOutRate, getTopSellingProducts, getLowSellingProducts, getConversionRate};
+const getLowSellingProducts = async (limit = 10) => {
+  try {
+    const response = await fetch(
+      `${BASE_URL}/api/kpi/low-selling-products?limit=${limit}`,
+      {
+        method: "GET",
+        headers: getHeaders(),
+      },
+    );
+    if (!response.ok) {
+      throw new Error(`getLowSellingProducts failed: ${response.statusText}`);
+    }
+    const data = await response.json();
+    return data.lowProducts;
+  } catch (error) {
+    console.error("Error during getLowSellingProducts:", error);
+    throw error;
+  }
+};
+
+const getConversionRate = async () => {
+  try {
+    const response = await fetch(`${BASE_URL}/api/kpi/conversion-rate`, {
+      method: "GET",
+      headers: getHeaders(),
+    });
+    if (!response.ok) {
+      throw new Error(`getConversionRate failed: ${response.statusText}`);
+    }
+    const data = await response.json();
+    return data.conversionRate;
+  } catch (error) {
+    console.error("Error during getConversionRate:", error);
+    throw error;
+  }
+};
+
+export {
+  login,
+  getUser,
+  getUsers,
+  addUser,
+  deleteUser,
+  editUser,
+  getProducts,
+  getCategorys,
+  getProductByName,
+  addProduct,
+  deleteProduct,
+  editProduct,
+  updateProductStock,
+  getAverageCartValue,
+  getStockOutRate,
+  getTopSellingProducts,
+  getLowSellingProducts,
+  getConversionRate,
+};
