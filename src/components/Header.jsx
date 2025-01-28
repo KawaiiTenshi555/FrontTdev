@@ -48,9 +48,9 @@ const Header = () => {
           Profils clients
         </Link>
         <Link
-          to="/Login"
+          to="/Profile"
           className={`flex-grow text-center py-4 text-white ${
-            location.pathname === "/Login"
+            location.pathname === "/Profile"
               ? "bg-stone-900"
               : "bg-stone-800 hover:bg-stone-700"
           } focus:outline-none`}

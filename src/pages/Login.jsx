@@ -1,17 +1,18 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; 
 import { login } from "../Api.js";
 
 export default function Login() {
-  // Récupère les informations en local si existantes.
+  // Local states
   const [email, setEmail] = useState(() => {
     return localStorage.getItem("email") || "";
   });
-
   const [password, setPassword] = useState("");
-
   const [loading, setLoading] = useState(false);
-
   const [errorMessage, setErrorMessage] = useState("");
+
+  // React Router hook for redirection
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,8 +25,8 @@ export default function Login() {
       localStorage.setItem("email", email);
       localStorage.setItem("jwt_token", token);
 
-      // Logique supplémentaire après connexion réussie
-      console.log("Connexion réussie, token:", token);
+      // After successful login, redirect to the landing page ("/" as an example)
+      navigate("/profile");
     } catch (err) {
       setErrorMessage(err.message);
     } finally {
@@ -33,9 +34,7 @@ export default function Login() {
     }
   };
 
-  // In your JSX, display the error message
-
-  // Suppression de l'enregistrement du Mot de Passe sur changement de page
+  // Clear password on component mount (or page change)
   useEffect(() => {
     setPassword("");
   }, []);
@@ -81,11 +80,18 @@ export default function Login() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
+
+          {/* Display error message if any */}
+          {errorMessage && (
+            <div className="text-red-500 text-sm">{errorMessage}</div>
+          )}
+
           <button
             type="submit"
+            disabled={loading}
             className="w-full px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            Connexion
+            {loading ? "Connexion en cours..." : "Connexion"}
           </button>
         </form>
       </div>

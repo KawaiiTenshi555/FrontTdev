@@ -16,8 +16,8 @@ export default function App() {
       <div className="pt-20"></div>
 
       <Routes>
-        <Route path="/" element={<Landing />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/Landing" element={<Landing />} />
+        <Route path="/" element={<Login />} />
         <Route path="/StockManagement" element={<StockManagementPage />} />
         <Route path="/UserManagement" element={<UserManagementPage />} />
         <Route path="/KPI" element={<Dashboard />} />
