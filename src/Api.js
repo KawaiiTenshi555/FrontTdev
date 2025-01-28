@@ -1,269 +1,450 @@
+// src/Api.js
+
 const BASE_URL = "http://localhost:3000";
 
-const getHeaders = () => {
-  const token = localStorage.getItem("jwt_token");
+// Fonction pour obtenir les en-têtes de requête
+const getHeaders = (includeToken = false) => {
   const headers = {
     "Content-Type": "application/json",
   };
-  if (token) {
-    headers["x-auth-token"] = token;
+  if (includeToken) {
+    const token = localStorage.getItem("jwt_token");
+    if (token) {
+      headers["x-auth-token"] = token;
+    }
   }
   return headers;
 };
 
+// Fonction de connexion
 const login = async (email, password) => {
   try {
     const response = await fetch(`${BASE_URL}/api/user/login`, {
       method: "POST",
-      headers: getHeaders(),
+      headers: getHeaders(false), // Ne pas inclure le token
       body: JSON.stringify({ email, password }),
     });
-    if (!response.ok) {
-      throw new Error(`Login failed: ${response.statusText}`);
-    }
     const data = await response.json();
+    if (!response.ok) {
+      throw new Error(
+        `Échec de la connexion : ${data.error || response.statusText}`,
+      );
+    }
     return data.token;
   } catch (error) {
-    console.error("Error during login:", error);
+    console.error("Erreur lors de la connexion :", error);
     throw error;
   }
 };
 
-const getUsers = async () => {
-    try {
-        const response = await fetch(`${BASE_URL}/api/users`, {
-            method: "GET",
-            headers: getHeaders(),
-        });
-        if (!response.ok) {
-            throw new Error(`getUsers failed: ${response.statusText}`);
-        }
-        const data = await response.json();
-        return data.users;
-    } catch (error) {
-        console.error("Error during getUsers:", error);
-        throw error;
+// Fonction pour obtenir l'utilisateur actuel
+const getCurrentUser = async () => {
+  try {
+    const response = await fetch(`${BASE_URL}/api/user/currentUser`, {
+      method: "GET",
+      headers: getHeaders(true), // Inclure le token
+    });
+    if (!response.ok) {
+      throw new Error(
+        `Échec de la récupération de l'utilisateur actuel : ${response.statusText}`,
+      );
     }
-    // Le backend renvoie l'objet `currentUser` directement (sans enveloppe "user")
     const userData = await response.json();
     return userData;
   } catch (error) {
-    console.error("Error during getCurrentUser:", error);
+    console.error(
+      "Erreur lors de la récupération de l'utilisateur actuel :",
+      error,
+    );
     throw error;
   }
 };
 
-const getUser = async (id) => {
-    try {
-        const response = await fetch(`${BASE_URL}/api/user/${id}`, {
-            method: "GET",
-            headers: getHeaders(),
-        });
-        if (!response.ok) {
-            throw new Error(`getUser failed: ${response.statusText}`);
-        }
-        const data = await response.json();
-        return data.user;
-    } catch (error) {
-        console.error("Error during getUser:", error);
-        throw error;
+// Fonction pour obtenir tous les utilisateurs
+const getUsers = async () => {
+  try {
+    const response = await fetch(`${BASE_URL}/api/users`, {
+      method: "GET",
+      headers: getHeaders(true), // Inclure le token si nécessaire
+    });
+    if (!response.ok) {
+      throw new Error(
+        `Échec de la récupération des utilisateurs : ${response.statusText}`,
+      );
     }
     const data = await response.json();
     return data.users;
   } catch (error) {
-    console.error("Error during getUsers:", error);
+    console.error("Erreur lors de la récupération des utilisateurs :", error);
     throw error;
   }
 };
 
-const addUser = async (user) => {
-    try {
-        const response = await fetch(`${BASE_URL}/api/user/${id}`, {
-            method: "POST",
-            headers: getHeaders(),
-            body: JSON.stringify({ user }),
-        });
-        if (!response.ok) {
-            throw new Error(`addUser failed: ${response.statusText}`);
-        }
-        const data = await response.json();
-        return data.message;
-    } catch (error) {
-        console.error("Error during addUser:", error);
-        throw error;
+// Fonction pour obtenir un utilisateur spécifique par ID
+const getUser = async (id) => {
+  try {
+    const response = await fetch(`${BASE_URL}/api/user/${id}`, {
+      method: "GET",
+      headers: getHeaders(true), // Inclure le token si nécessaire
+    });
+    if (!response.ok) {
+      throw new Error(
+        `Échec de la récupération de l'utilisateur : ${response.statusText}`,
+      );
     }
     const data = await response.json();
     return data.user;
   } catch (error) {
-    console.error("Error during getUser:", error);
+    console.error("Erreur lors de la récupération de l'utilisateur :", error);
     throw error;
   }
 };
 
+// Fonction pour ajouter un nouvel utilisateur (inscription)
+const addUser = async (user) => {
+  try {
+    const response = await fetch(`${BASE_URL}/api/user/signup`, {
+      method: "POST",
+      headers: getHeaders(false), // Généralement, l'inscription ne nécessite pas de token
+      body: JSON.stringify(user),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      const errorMsg = Array.isArray(data.error)
+        ? data.error.join(", ")
+        : data.error;
+      throw new Error(
+        `Échec de l'ajout de l'utilisateur : ${errorMsg || response.statusText}`,
+      );
+    }
+    return data.accessToken || data.message;
+  } catch (error) {
+    console.error("Erreur lors de l'ajout de l'utilisateur :", error);
+    throw error;
+  }
+};
+
+// Fonction pour supprimer un utilisateur par ID
 const deleteUser = async (id) => {
-    try {
-        const response = await fetch(`${BASE_URL}/api/user/${id}`, {
-            method: "DELETE",
-            headers: getHeaders(),
-        });
-        if (!response.ok) {
-            throw new Error(`deleteUser failed: ${response.statusText}`);
-        }
-        const data = await response.json();
-        return data.message;
-    } catch (error) {
-        console.error("Error during deleteUser:", error);
-        throw error;
-    }
+  try {
+    const response = await fetch(`${BASE_URL}/api/user/delete`, {
+      method: "DELETE",
+      headers: getHeaders(true), // Inclure le token
+      body: JSON.stringify({ id }),
+    });
     const data = await response.json();
+    if (!response.ok) {
+      const errorMsg = Array.isArray(data.error)
+        ? data.error.join(", ")
+        : data.error;
+      throw new Error(
+        `Échec de la suppression de l'utilisateur : ${errorMsg || response.statusText}`,
+      );
+    }
     return data.message;
   } catch (error) {
-    console.error("Error during addUser:", error);
+    console.error("Erreur lors de la suppression de l'utilisateur :", error);
     throw error;
   }
 };
 
-const editUser = async (id, user) => {
-    try {
-        const response = await fetch(`${BASE_URL}/api/product/editProduct?id=${id}`, {
-            method: "PUT",
-            headers: getHeaders(),
-            body: JSON.stringify({ user }),
-        });
-        if (!response.ok) {
-            throw new Error(`editUser failed: ${response.statusText}`);
-        }
-        const data = await response.json();
-        return data.message;
-    } catch (error) {
-        console.error("Error during editUser:", error);
-        throw error;
-    }
+// Fonction pour éditer le profil de l'utilisateur actuel
+const editUser = async (user) => {
+  try {
+    const response = await fetch(`${BASE_URL}/api/user/update`, {
+      method: "PATCH",
+      headers: getHeaders(true), // Inclure le token
+      body: JSON.stringify(user), // Envoyer les données de l'utilisateur directement
+    });
     const data = await response.json();
+    if (!response.ok) {
+      const errorMsg = Array.isArray(data.error)
+        ? data.error.join(", ")
+        : data.error;
+      throw new Error(
+        `Échec de la mise à jour de l'utilisateur : ${errorMsg || response.statusText}`,
+      );
+    }
     return data.message;
   } catch (error) {
-    console.error("Error during deleteUser:", error);
+    console.error("Erreur lors de la mise à jour de l'utilisateur :", error);
     throw error;
   }
 };
 
-const getProducts = async () => {
-    console.log("getProducts");
-    
-    try {
-        const response = await fetch(`${BASE_URL}/api/product/getProducts`, {
-            method: "GET",
-            headers: getHeaders(),
-        });
-        if (!response.ok) {
-            throw new Error(`getProducts failed: ${response.statusText}`);
-        }
-        const data = await response.json();
-        const products =data.message;
-        
-        return products;
-    } catch (error) {
-        console.error("Error during getProducts:", error);
-        throw error;
+// Fonctions liées aux produits (exemples génériques, à adapter selon votre backend)
+
+// Fonction pour obtenir tous les produits avec paramètres optionnels
+const getProducts = async (params = {}) => {
+  try {
+    const queryString = new URLSearchParams(params).toString();
+    const response = await fetch(`${BASE_URL}/api/products?${queryString}`, {
+      method: "GET",
+      headers: getHeaders(true), // Inclure le token si nécessaire
+    });
+    if (!response.ok) {
+      throw new Error(
+        `Échec de la récupération des produits : ${response.statusText}`,
+      );
     }
     const data = await response.json();
-    return data.message;
+    return data.products;
   } catch (error) {
-    console.error("Error during editUser:", error);
+    console.error("Erreur lors de la récupération des produits :", error);
     throw error;
   }
 };
 
-const getCategorys = async () => {
-    console.log("getProducts");
-    
-    try {
-        const response = await fetch(`${BASE_URL}/api/product/getCategorys`, {
-            method: "GET",
-            headers: getHeaders(),
-        });
-        if (!response.ok) {
-            throw new Error(`getCategorys failed: ${response.statusText}`);
-        }
-        const data = await response.json();
-        const products =data.message;
-        
-        return products;
-    } catch (error) {
-        console.error("Error during getCategorys:", error);
-        throw error;
+// Fonction pour obtenir un produit spécifique par ID
+const getProduct = async (id) => {
+  try {
+    const response = await fetch(`${BASE_URL}/api/products/${id}`, {
+      method: "GET",
+      headers: getHeaders(true), // Inclure le token si nécessaire
+    });
+    if (!response.ok) {
+      throw new Error(
+        `Échec de la récupération du produit : ${response.statusText}`,
+      );
     }
     const data = await response.json();
-    const products = data.message;
-
-    return products;
+    return data.product;
   } catch (error) {
-    console.error("Error during getProducts:", error);
+    console.error("Erreur lors de la récupération du produit :", error);
     throw error;
   }
 };
 
-const getProductByName = async (name) => {
-    console.log("getProductByName :",name);
-    
-    try {
-        const response = await fetch(`${BASE_URL}/api/product/getProductsByName?productName=${name}`, {
-            method: "GET",
-            headers: getHeaders(),
-        });
-        if (!response.ok) {
-            throw new Error(`getProductByName failed: ${response.statusText}`);
-        }
-        const data = await response.json();
-        return data.message;
-    } catch (error) {
-        console.error("Error during getProductByName:", error);
-        throw error;
-    }
-};
-
+// Fonction pour ajouter un nouveau produit
 const addProduct = async (productData) => {
-    try {
-        const response = await fetch(`${BASE_URL}/api/product/addProduct`, {
-            method: "POST",
-            headers: getHeaders(),
-            body: JSON.stringify(productData),
-        });
-        if (!response.ok) {
-            throw new Error(`addProduct failed: ${response.statusText}`);
-        }
-        const data = await response.json();
-        return data.message;
-    } catch (error) {
-        console.error("Error during addProduct:", error);
-        throw error;
-    }
+  try {
+    const response = await fetch(`${BASE_URL}/api/products`, {
+      method: "POST",
+      headers: getHeaders(true), // Inclure le token si nécessaire
+      body: JSON.stringify(productData),
+    });
     const data = await response.json();
-    const products = data.message;
-
-    return products;
+    if (!response.ok) {
+      const errorMsg = Array.isArray(data.error)
+        ? data.error.join(", ")
+        : data.error;
+      throw new Error(
+        `Échec de l'ajout du produit : ${errorMsg || response.statusText}`,
+      );
+    }
+    return data.message;
   } catch (error) {
-    console.error("Error during getCategorys:", error);
+    console.error("Erreur lors de l'ajout du produit :", error);
     throw error;
   }
 };
 
+// Fonction pour éditer un produit par ID
 const editProduct = async (id, productData) => {
-    try {
-        const response = await fetch(`${BASE_URL}/api/product/editProduct?id=${id}`, {
-            method: "PUT",
-            headers: getHeaders(),
-            body: JSON.stringify(productData),
-        });
-        if (!response.ok) {
-            throw new Error(`editProduct failed: ${response.statusText}`);
-        }
-        const data = await response.json();
-        console.log(data);
-        return data.message;
-    } catch (error) {
-        console.error("Error during editProduct:", error);
-        throw error;
+  try {
+    const response = await fetch(`${BASE_URL}/api/products/${id}`, {
+      method: "PUT",
+      headers: getHeaders(true), // Inclure le token si nécessaire
+      body: JSON.stringify(productData),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      const errorMsg = Array.isArray(data.error)
+        ? data.error.join(", ")
+        : data.error;
+      throw new Error(
+        `Échec de la mise à jour du produit : ${errorMsg || response.statusText}`,
+      );
+    }
+    return data.message;
+  } catch (error) {
+    console.error("Erreur lors de la mise à jour du produit :", error);
+    throw error;
+  }
+};
+
+// Fonction pour supprimer un produit par ID
+const deleteProduct = async (id) => {
+  try {
+    const response = await fetch(`${BASE_URL}/api/products/${id}`, {
+      method: "DELETE",
+      headers: getHeaders(true), // Inclure le token si nécessaire
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      const errorMsg = Array.isArray(data.error)
+        ? data.error.join(", ")
+        : data.error;
+      throw new Error(
+        `Échec de la suppression du produit : ${errorMsg || response.statusText}`,
+      );
+    }
+    return data.message;
+  } catch (error) {
+    console.error("Erreur lors de la suppression du produit :", error);
+    throw error;
+  }
+};
+
+// Fonction pour mettre à jour le stock d'un produit
+const updateProductStock = async (id, stockData) => {
+  try {
+    const response = await fetch(`${BASE_URL}/api/products/${id}/stock`, {
+      method: "PATCH",
+      headers: getHeaders(true), // Inclure le token si nécessaire
+      body: JSON.stringify(stockData),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      const errorMsg = Array.isArray(data.error)
+        ? data.error.join(", ")
+        : data.error;
+      throw new Error(
+        `Échec de la mise à jour du stock : ${errorMsg || response.statusText}`,
+      );
+    }
+    return data.message;
+  } catch (error) {
+    console.error("Erreur lors de la mise à jour du stock :", error);
+    throw error;
+  }
+};
+
+// Fonctions liées aux KPI (Key Performance Indicators)
+
+// Fonction pour obtenir la valeur moyenne du panier
+const getAverageCartValue = async () => {
+  try {
+    const response = await fetch(`${BASE_URL}/api/kpi/average-cart-value`, {
+      method: "GET",
+      headers: getHeaders(true), // Inclure le token si nécessaire
+    });
+    if (!response.ok) {
+      throw new Error(
+        `Échec de la récupération de la valeur moyenne du panier : ${response.statusText}`,
+      );
+    }
+    const data = await response.json();
+    return data.averageCartValue;
+  } catch (error) {
+    console.error(
+      "Erreur lors de la récupération de la valeur moyenne du panier :",
+      error,
+    );
+    throw error;
+  }
+};
+
+// Fonction pour obtenir le taux de rupture de stock
+const getStockOutRate = async () => {
+  try {
+    const response = await fetch(`${BASE_URL}/api/kpi/stock-out-rate`, {
+      method: "GET",
+      headers: getHeaders(true), // Inclure le token si nécessaire
+    });
+    if (!response.ok) {
+      throw new Error(
+        `Échec de la récupération du taux de rupture de stock : ${response.statusText}`,
+      );
+    }
+    const data = await response.json();
+    return data.stockOutRate;
+  } catch (error) {
+    console.error(
+      "Erreur lors de la récupération du taux de rupture de stock :",
+      error,
+    );
+    throw error;
+  }
+};
+
+// Fonction pour obtenir les produits les plus vendus
+const getTopSellingProducts = async (limit = 10) => {
+  try {
+    const response = await fetch(
+      `${BASE_URL}/api/kpi/top-selling-products?limit=${limit}`,
+      {
+        method: "GET",
+        headers: getHeaders(true), // Inclure le token si nécessaire
+      },
+    );
+    if (!response.ok) {
+      throw new Error(
+        `Échec de la récupération des produits les plus vendus : ${response.statusText}`,
+      );
+    }
+    const data = await response.json();
+    return data.topProducts;
+  } catch (error) {
+    console.error(
+      "Erreur lors de la récupération des produits les plus vendus :",
+      error,
+    );
+    throw error;
+  }
+};
+
+// Fonction pour obtenir les produits les moins vendus
+const getLowSellingProducts = async (limit = 10) => {
+  try {
+    const response = await fetch(
+      `${BASE_URL}/api/kpi/low-selling-products?limit=${limit}`,
+      {
+        method: "GET",
+        headers: getHeaders(true), // Inclure le token si nécessaire
+      },
+    );
+    if (!response.ok) {
+      throw new Error(
+        `Échec de la récupération des produits les moins vendus : ${response.statusText}`,
+      );
+    }
+    const data = await response.json();
+    return data.lowProducts;
+  } catch (error) {
+    console.error(
+      "Erreur lors de la récupération des produits les moins vendus :",
+      error,
+    );
+    throw error;
+  }
+};
+
+// Fonction pour obtenir le taux de conversion
+const getConversionRate = async () => {
+  try {
+    const response = await fetch(`${BASE_URL}/api/kpi/conversion-rate`, {
+      method: "GET",
+      headers: getHeaders(true), // Inclure le token si nécessaire
+    });
+    if (!response.ok) {
+      throw new Error(
+        `Échec de la récupération du taux de conversion : ${response.statusText}`,
+      );
+    }
+    const data = await response.json();
+    return data.conversionRate;
+  } catch (error) {
+    console.error(
+      "Erreur lors de la récupération du taux de conversion :",
+      error,
+    );
+    throw error;
+  }
+};
+const getProductByName = async (name) => {
+  console.log("getProductByName :", name);
+
+  try {
+    const response = await fetch(
+      `${BASE_URL}/api/product/getProductsByName?productName=${name}`,
+      {
+        method: "GET",
+        headers: getHeaders(),
+      },
+    );
+    if (!response.ok) {
+      throw new Error(`getProductByName failed: ${response.statusText}`);
     }
     const data = await response.json();
     return data.message;
@@ -273,216 +454,16 @@ const editProduct = async (id, productData) => {
   }
 };
 
-const deleteProduct = async (id) => {
-    try {
-        const response = await fetch(`${BASE_URL}/api/product/deleteProduct?id=${id}`, {
-            method: "DELETE",
-            headers: getHeaders(),
-        });
-        if (!response.ok) {
-            throw new Error(`deleteProduct failed: ${response.statusText}`);
-        }
-        const data = await response.json();
-        return data.message;
-    } catch (error) {
-        console.error("Error during deleteProduct:", error);
-        throw error;
-    }
-    const data = await response.json();
-    return data.message;
-  } catch (error) {
-    console.error("Error during addProduct:", error);
-    throw error;
-  }
-};
-
-const updateProductStock = async (id, stockData) => {
-    try {
-        const response = await fetch(`${BASE_URL}/api/products/${id}/stock`, {
-            method: "PATCH",
-            headers: getHeaders(),
-            body: JSON.stringify(stockData),
-        });
-        if (!response.ok) {
-            throw new Error(`updateProductStock failed: ${response.statusText}`);
-        }
-        const data = await response.json();
-        return data.message;
-    } catch (error) {
-        console.error("Error during updateProductStock:", error);
-        throw error;
-    }
-    const data = await response.json();
-    console.log(data);
-    return data.message;
-  } catch (error) {
-    console.error("Error during editProduct:", error);
-    throw error;
-  }
-};
-
-const getAverageCartValue = async () => {
-    try {
-        const response = await fetch(`${BASE_URL}/api/kpi/average-cart-value`, {
-            method: "GET",
-            headers: getHeaders(),
-        });
-        if (!response.ok) {
-            throw new Error(`getAverageCartValue failed: ${response.statusText}`);
-        }
-        const data = await response.json();
-        return data.averageCartValue;
-    } catch (error) {
-        console.error("Error during getAverageCartValue:", error);
-        throw error;
-    }
-    const data = await response.json();
-    return data.message;
-  } catch (error) {
-    console.error("Error during deleteProduct:", error);
-    throw error;
-  }
-};
-
-const getStockOutRate = async () => {
-    try {
-        const response = await fetch(`${BASE_URL}/api/kpi/stock-out-rate`, {
-            method: "GET",
-            headers: getHeaders(),
-        });
-        if (!response.ok) {
-            throw new Error(`getStockOutRate failed: ${response.statusText}`);
-        }
-        const data = await response.json();
-        return data.stockOutRate;
-    } catch (error) {
-        console.error("Error during getStockOutRate:", error);
-        throw error;
-    }
-    const data = await response.json();
-    return data.message;
-  } catch (error) {
-    console.error("Error during updateProductStock:", error);
-    throw error;
-  }
-};
-
-const getTopSellingProducts = async (limit = 10) => {
-    try {
-        const response = await fetch(`${BASE_URL}/api/kpi/top-selling-products?limit=${limit}`, {
-            method: "GET",
-            headers: getHeaders(),
-        });
-        if (!response.ok) {
-            throw new Error(`getTopSellingProducts failed: ${response.statusText}`);
-        }
-        const data = await response.json();
-        return data.topProducts;
-    } catch (error) {
-        console.error("Error during getTopSellingProducts:", error);
-        throw error;
-    }
-    const data = await response.json();
-    return data.averageCartValue;
-  } catch (error) {
-    console.error("Error during getAverageCartValue:", error);
-    throw error;
-  }
-};
-
-const getLowSellingProducts = async (limit = 10) => {
-    try {
-        const response = await fetch(`${BASE_URL}/api/kpi/low-selling-products?limit=${limit}`, {
-            method: "GET",
-            headers: getHeaders(),
-        });
-        if (!response.ok) {
-            throw new Error(`getLowSellingProducts failed: ${response.statusText}`);
-        }
-        const data = await response.json();
-        return data.lowProducts;
-    } catch (error) {
-        console.error("Error during getLowSellingProducts:", error);
-        throw error;
-    }
-    const data = await response.json();
-    return data.stockOutRate;
-  } catch (error) {
-    console.error("Error during getStockOutRate:", error);
-    throw error;
-  }
-};
-
-const getConversionRate = async () => {
-    try {
-        const response = await fetch(`${BASE_URL}/api/kpi/conversion-rate`, {
-            method: "GET",
-            headers: getHeaders(),
-        });
-        if (!response.ok) {
-            throw new Error(`getConversionRate failed: ${response.statusText}`);
-        }
-        const data = await response.json();
-        return data.conversionRate;
-    } catch (error) {
-        console.error("Error during getConversionRate:", error);
-        throw error;
-    }
-    const data = await response.json();
-    return data.topProducts;
-  } catch (error) {
-    console.error("Error during getTopSellingProducts:", error);
-    throw error;
-  }
-};
-
-const getLowSellingProducts = async (limit = 10) => {
-  try {
-    const response = await fetch(
-      `${BASE_URL}/api/kpi/low-selling-products?limit=${limit}`,
-      {
-        method: "GET",
-        headers: getHeaders(),
-      },
-    );
-    if (!response.ok) {
-      throw new Error(`getLowSellingProducts failed: ${response.statusText}`);
-    }
-    const data = await response.json();
-    return data.lowProducts;
-  } catch (error) {
-    console.error("Error during getLowSellingProducts:", error);
-    throw error;
-  }
-};
-
-const getConversionRate = async () => {
-  try {
-    const response = await fetch(`${BASE_URL}/api/kpi/conversion-rate`, {
-      method: "GET",
-      headers: getHeaders(),
-    });
-    if (!response.ok) {
-      throw new Error(`getConversionRate failed: ${response.statusText}`);
-    }
-    const data = await response.json();
-    return data.conversionRate;
-  } catch (error) {
-    console.error("Error during getConversionRate:", error);
-    throw error;
-  }
-};
-
 export {
   login,
-  getUser,
+  getCurrentUser,
   getUsers,
+  getUser,
   addUser,
   deleteUser,
   editUser,
+  getProduct,
   getProducts,
-  getCategorys,
-  getProductByName,
   addProduct,
   deleteProduct,
   editProduct,
@@ -492,4 +473,5 @@ export {
   getTopSellingProducts,
   getLowSellingProducts,
   getConversionRate,
+  getProductByName,
 };
