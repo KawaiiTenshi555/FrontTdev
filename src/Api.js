@@ -148,13 +148,13 @@ const deleteUser = async (id) => {
   }
 };
 
-// Fonction pour éditer le profil de l'utilisateur actuel
-const editUser = async (user) => {
+// Edit user
+const editUser = async (formData) => {
   try {
     const response = await fetch(`${BASE_URL}/api/user/update`, {
       method: "PATCH",
-      headers: getHeaders(true), // Inclure le token
-      body: JSON.stringify(user), // Envoyer les données de l'utilisateur directement
+      headers: getHeaders(true),
+      body: JSON.stringify(formData),
     });
     const data = await response.json();
     if (!response.ok) {
@@ -162,12 +162,12 @@ const editUser = async (user) => {
         ? data.error.join(", ")
         : data.error;
       throw new Error(
-        `Échec de la mise à jour de l'utilisateur : ${errorMsg || response.statusText}`,
+        `Failed to update user: ${errorMsg || response.statusText}`,
       );
     }
     return data.message;
   } catch (error) {
-    console.error("Erreur lors de la mise à jour de l'utilisateur :", error);
+    console.error("Error updating user:", error);
     throw error;
   }
 };

@@ -1,15 +1,10 @@
-// src/pages/Profile.jsx
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getCurrentUser, editUser } from "../Api"; // Ensure correct import
+import { getCurrentUser, editUser } from "../Api";
 
 export default function Profile() {
   const navigate = useNavigate();
   const token = localStorage.getItem("jwt_token");
-
-  // User ID is no longer needed as the backend identifies the user via the token
-  // const [userId, setUserId] = useState(null);
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -24,12 +19,13 @@ export default function Profile() {
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState(""); // For success messages
 
   // Fetch user data
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const user = await getCurrentUser(); // Remove token parameter if getCurrentUser doesn't need it
+        const user = await getCurrentUser();
         if (user) {
           setFormData({
             firstName: user.firstName || "",
@@ -61,13 +57,14 @@ export default function Profile() {
     e.preventDefault();
     setUpdating(true);
     setError("");
+    setSuccess("");
 
     try {
-      const message = await editUser(token, formData);
-      console.log("Réponse API :", message);
-      alert("Profil mis à jour avec succès !");
+      const message = await editUser(formData);
+      console.log("API Response:", message);
+      setSuccess("Profil mis à jour avec succès !");
     } catch (err) {
-      console.error("Erreur lors de la mise à jour du profil :", err);
+      console.error("Error updating profile:", err);
       setError(err.message || "Erreur lors de la mise à jour du profil.");
     } finally {
       setUpdating(false);
@@ -106,6 +103,13 @@ export default function Profile() {
             Déconnexion
           </button>
         </div>
+
+        {/* Success Message */}
+        {success && (
+          <div className="mb-4 p-2 bg-green-500 text-white rounded">
+            {success}
+          </div>
+        )}
 
         {/* Error Display */}
         {error && (
