@@ -242,11 +242,14 @@ const addProduct = async (productData) => {
 // Fonction pour éditer un produit par ID
 const editProduct = async (id, productData) => {
   try {
-    const response = await fetch(`${BASE_URL}/api/products/${id}`, {
-      method: "PUT",
-      headers: getHeaders(true), // Inclure le token si nécessaire
-      body: JSON.stringify(productData),
-    });
+    const response = await fetch(
+      `${BASE_URL}/api/product/editProduct?id=${id}`,
+      {
+        method: "PUT",
+        headers: getHeaders(true), // Inclure le token si nécessaire
+        body: JSON.stringify(productData),
+      },
+    );
     const data = await response.json();
     if (!response.ok) {
       const errorMsg = Array.isArray(data.error)
@@ -266,10 +269,13 @@ const editProduct = async (id, productData) => {
 // Fonction pour supprimer un produit par ID
 const deleteProduct = async (id) => {
   try {
-    const response = await fetch(`${BASE_URL}/api/products/${id}`, {
-      method: "DELETE",
-      headers: getHeaders(true), // Inclure le token si nécessaire
-    });
+    const response = await fetch(
+      `${BASE_URL}/api/product/deleteProduct?id=${id}`,
+      {
+        method: "DELETE",
+        headers: getHeaders(true), // Inclure le token si nécessaire
+      },
+    );
     const data = await response.json();
     if (!response.ok) {
       const errorMsg = Array.isArray(data.error)
