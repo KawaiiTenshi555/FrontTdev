@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getProducts, deleteProduct, editProduct, addProduct } from '../Api';
+import { getProducts, getProductByName, deleteProduct, editProduct, addProduct } from '../Api';
 import StockTable from '../components/StockTable';
 import ProductModal from '../components/ProductModal';
 
@@ -13,6 +13,7 @@ export default function StockManagementPage() {
     const fetchProducts = async () => {
       try {
         const data = await getProducts();
+        console.log(data);
         setProducts(data);
       } catch (error) {
         console.error('Erreur lors du chargement des produits :', error);
@@ -22,26 +23,17 @@ export default function StockManagementPage() {
     fetchProducts();
   }, []);
 
-  const generateFakeProducts = () => {
-    const statuses = ['En stock', 'Rupture', 'En commande'];
-    const warehouses = ['Entrepôt A', 'Entrepôt B', 'Entrepôt C'];
+  const handleSearch = async (name) => {
+    console.log(name);
     
-    // Génère des produits fictifs
-    const products = Array.from({ length: 20 }).map((_, index) => ({
-      id: index + 1,
-      name: `Produit ${index + 1}`,
-      warehouse: warehouses[Math.floor(Math.random() * warehouses.length)],
-      status: statuses[Math.floor(Math.random() * statuses.length)],
-      price: (Math.random() * 100).toFixed(2), // Prix aléatoire entre 0 et 100€
-    }));
-    
-    return products;
+    setSearchTerm(name);
+    try {
+      const data = await getProductByName(name);
+      setProducts(data);
+    } catch (error) {
+      console.error('Erreur lors de la recherche du produit :', error);
+    }
   };
-
-  useEffect(() => {
-    const fakeProducts = generateFakeProducts();
-    setProducts(fakeProducts);
-  }, []);
 
   const handleAddProduct = () => {
     setEditingProduct(null);
@@ -54,6 +46,7 @@ export default function StockManagementPage() {
   };
 
   const handleSaveProduct = async (formData) => {
+    console.log(formData);
     if (editingProduct) {
       await editProduct(editingProduct.id, formData);
     } else {
@@ -70,11 +63,6 @@ export default function StockManagementPage() {
     setProducts(data);
   };
 
-
-  const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   return (
     <div className="bg-stone-100 p-6">
       <header className="flex justify-between items-center mb-6 px-8">
@@ -84,7 +72,7 @@ export default function StockManagementPage() {
             placeholder="Rechercher"
             className="w-full p-2 pl-4 pr-10 border border-stone-300 rounded-[22px]"
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => handleSearch(e.target.value)}  // Appel immédiat de la recherche
           />
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -109,10 +97,8 @@ export default function StockManagementPage() {
         </button>
       </header>
 
-
-
       <StockTable
-        products={filteredProducts}
+        products={products}
         onDelete={handleDeleteProduct}
         onUpdate={handleEditProduct}
       />

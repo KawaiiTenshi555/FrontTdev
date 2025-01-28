@@ -30,7 +30,7 @@ const login = async (email, password) => {
     }
 };
 
-const getUsers = async (token) => {
+const getUsers = async () => {
     try {
         const response = await fetch(`${BASE_URL}/api/users`, {
             method: "GET",
@@ -47,7 +47,7 @@ const getUsers = async (token) => {
     }
 };
 
-const getUser = async (id, token) => {
+const getUser = async (id) => {
     try {
         const response = await fetch(`${BASE_URL}/api/user/${id}`, {
             method: "GET",
@@ -64,7 +64,7 @@ const getUser = async (id, token) => {
     }
 };
 
-const addUser = async (token, user) => {
+const addUser = async (user) => {
     try {
         const response = await fetch(`${BASE_URL}/api/user/${id}`, {
             method: "POST",
@@ -82,7 +82,7 @@ const addUser = async (token, user) => {
     }
 };
 
-const deleteUser = async (id, token) => {
+const deleteUser = async (id) => {
     try {
         const response = await fetch(`${BASE_URL}/api/user/${id}`, {
             method: "DELETE",
@@ -99,9 +99,9 @@ const deleteUser = async (id, token) => {
     }
 };
 
-const editUser = async (id, token, user) => {
+const editUser = async (id, user) => {
     try {
-        const response = await fetch(`${BASE_URL}/api/user/${id}`, {
+        const response = await fetch(`${BASE_URL}/api/product/editProduct?id=${id}`, {
             method: "PUT",
             headers: getHeaders(),
             body: JSON.stringify({ user }),
@@ -117,10 +117,11 @@ const editUser = async (id, token, user) => {
     }
 };
 
-const getProducts = async (token, params = {}) => {
+const getProducts = async () => {
+    console.log("getProducts");
+    
     try {
-        const queryString = new URLSearchParams(params).toString();
-        const response = await fetch(`${BASE_URL}/api/products?${queryString}`, {
+        const response = await fetch(`${BASE_URL}/api/product/getProducts`, {
             method: "GET",
             headers: getHeaders(),
         });
@@ -128,34 +129,58 @@ const getProducts = async (token, params = {}) => {
             throw new Error(`getProducts failed: ${response.statusText}`);
         }
         const data = await response.json();
-        return data.products;
+        const products =data.message;
+        
+        return products;
     } catch (error) {
         console.error("Error during getProducts:", error);
         throw error;
     }
 };
 
-
-const getProduct = async (id, token) => {
+const getCategorys = async () => {
+    console.log("getProducts");
+    
     try {
-        const response = await fetch(`${BASE_URL}/api/products/${id}`, {
+        const response = await fetch(`${BASE_URL}/api/product/getCategorys`, {
             method: "GET",
             headers: getHeaders(),
         });
         if (!response.ok) {
-            throw new Error(`getProduct failed: ${response.statusText}`);
+            throw new Error(`getCategorys failed: ${response.statusText}`);
         }
         const data = await response.json();
-        return data.product;
+        const products =data.message;
+        
+        return products;
     } catch (error) {
-        console.error("Error during getProduct:", error);
+        console.error("Error during getCategorys:", error);
         throw error;
     }
 };
 
-const addProduct = async (productData, token) => {
+const getProductByName = async (name) => {
+    console.log("getProductByName :",name);
+    
     try {
-        const response = await fetch(`${BASE_URL}/api/products`, {
+        const response = await fetch(`${BASE_URL}/api/product/getProductsByName?productName=${name}`, {
+            method: "GET",
+            headers: getHeaders(),
+        });
+        if (!response.ok) {
+            throw new Error(`getProductByName failed: ${response.statusText}`);
+        }
+        const data = await response.json();
+        return data.message;
+    } catch (error) {
+        console.error("Error during getProductByName:", error);
+        throw error;
+    }
+};
+
+const addProduct = async (productData) => {
+    try {
+        const response = await fetch(`${BASE_URL}/api/product/addProduct`, {
             method: "POST",
             headers: getHeaders(),
             body: JSON.stringify(productData),
@@ -171,9 +196,9 @@ const addProduct = async (productData, token) => {
     }
 };
 
-const editProduct = async (id, productData, token) => {
+const editProduct = async (id, productData) => {
     try {
-        const response = await fetch(`${BASE_URL}/api/products/${id}`, {
+        const response = await fetch(`${BASE_URL}/api/product/editProduct?id=${id}`, {
             method: "PUT",
             headers: getHeaders(),
             body: JSON.stringify(productData),
@@ -182,6 +207,7 @@ const editProduct = async (id, productData, token) => {
             throw new Error(`editProduct failed: ${response.statusText}`);
         }
         const data = await response.json();
+        console.log(data);
         return data.message;
     } catch (error) {
         console.error("Error during editProduct:", error);
@@ -189,9 +215,9 @@ const editProduct = async (id, productData, token) => {
     }
 };
 
-const deleteProduct = async (id, token) => {
+const deleteProduct = async (id) => {
     try {
-        const response = await fetch(`${BASE_URL}/api/products/${id}`, {
+        const response = await fetch(`${BASE_URL}/api/product/deleteProduct?id=${id}`, {
             method: "DELETE",
             headers: getHeaders(),
         });
@@ -206,7 +232,7 @@ const deleteProduct = async (id, token) => {
     }
 };
 
-const updateProductStock = async (id, stockData, token) => {
+const updateProductStock = async (id, stockData) => {
     try {
         const response = await fetch(`${BASE_URL}/api/products/${id}/stock`, {
             method: "PATCH",
@@ -224,7 +250,7 @@ const updateProductStock = async (id, stockData, token) => {
     }
 };
 
-const getAverageCartValue = async (token) => {
+const getAverageCartValue = async () => {
     try {
         const response = await fetch(`${BASE_URL}/api/kpi/average-cart-value`, {
             method: "GET",
@@ -241,7 +267,7 @@ const getAverageCartValue = async (token) => {
     }
 };
 
-const getStockOutRate = async (token) => {
+const getStockOutRate = async () => {
     try {
         const response = await fetch(`${BASE_URL}/api/kpi/stock-out-rate`, {
             method: "GET",
@@ -258,7 +284,7 @@ const getStockOutRate = async (token) => {
     }
 };
 
-const getTopSellingProducts = async (token, limit = 10) => {
+const getTopSellingProducts = async (limit = 10) => {
     try {
         const response = await fetch(`${BASE_URL}/api/kpi/top-selling-products?limit=${limit}`, {
             method: "GET",
@@ -275,7 +301,7 @@ const getTopSellingProducts = async (token, limit = 10) => {
     }
 };
 
-const getLowSellingProducts = async (token, limit = 10) => {
+const getLowSellingProducts = async (limit = 10) => {
     try {
         const response = await fetch(`${BASE_URL}/api/kpi/low-selling-products?limit=${limit}`, {
             method: "GET",
@@ -292,7 +318,7 @@ const getLowSellingProducts = async (token, limit = 10) => {
     }
 };
 
-const getConversionRate = async (token) => {
+const getConversionRate = async () => {
     try {
         const response = await fetch(`${BASE_URL}/api/kpi/conversion-rate`, {
             method: "GET",
@@ -309,4 +335,4 @@ const getConversionRate = async (token) => {
     }
 };
 
-export { login, getUser, getUsers, addUser, deleteUser, editUser, getProduct, getProducts, addProduct, deleteProduct, editProduct, updateProductStock, getAverageCartValue, getStockOutRate, getTopSellingProducts, getLowSellingProducts, getConversionRate};
+export { login, getUser, getUsers, addUser, deleteUser, editUser, getProducts, getCategorys, getProductByName, addProduct, deleteProduct, editProduct, updateProductStock, getAverageCartValue, getStockOutRate, getTopSellingProducts, getLowSellingProducts, getConversionRate};
