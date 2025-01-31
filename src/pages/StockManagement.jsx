@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getProducts, getProductByName, deleteProduct, editProduct, addProduct } from '../Api';
+import { getProducts, getProductByName, deleteProduct, editProduct, addProduct, addProductStock, updateProductStock} from '../Api';
 import StockTable from '../components/StockTable';
 import ProductModal from '../components/ProductModal';
 
@@ -13,7 +13,6 @@ export default function StockManagementPage() {
     const fetchProducts = async () => {
       try {
         const data = await getProducts();
-        console.log(data);
         setProducts(data);
       } catch (error) {
         console.error('Erreur lors du chargement des produits :', error);
@@ -24,10 +23,13 @@ export default function StockManagementPage() {
   }, []);
 
   const handleSearch = async (name) => {
-    console.log(name);
-    
     setSearchTerm(name);
     try {
+      if (!name) {
+        const data = await getProducts();
+        setProducts(data);
+        return;
+      }
       const data = await getProductByName(name);
       setProducts(data);
     } catch (error) {
@@ -45,17 +47,53 @@ export default function StockManagementPage() {
     setIsModalOpen(true);
   };
 
-  const handleSaveProduct = async (formData) => {
-    console.log(formData);
-    if (editingProduct) {
-      await editProduct(editingProduct.id, formData);
-    } else {
-      await addProduct(formData);
+  const handleSaveProduct = async ({ type, data }) => {
+  
+    if (type === "product") {
+      const productData = { ...data };
+      delete productData.warehouse;
+  
+      if (editingProduct) {
+        // Mise à jour du produit uniquement
+        await editProduct(editingProduct.id, productData);
+      } else {
+        // Création du produit
+        const response = await addProduct(productData);
+        
+        // Création du stock pour le nouveau produit
+        if (response.product.id) {
+          await addProductStock({
+            productId: response.product.id,
+            warehouse: data.warehouse,
+            quantity: data.quantity,
+          });
+        } else {
+          console.error("Impossible de créer le stock pour le produit :", response);
+        }
+        
+      }
     }
+  
+    if (type === "stock") {
+      const stockData = { ...data };
+      if (editingProduct) {
+        // Vérification si le stock a changé avant de l'updater
+        if (
+          stockData.warehouse !== editingProduct.stock[0]?.warehouse ||
+          stockData.quantity !== editingProduct.stock[0]?.quantity
+        ) {
+          await updateProductStock(editingProduct.id, stockData);
+        }
+      } else {
+        await addProductStock(stockData);
+      }
+    }
+  
     setIsModalOpen(false);
-    const data = await getProducts();
-    setProducts(data);
+    const dataProducts = await getProducts();
+    setProducts(dataProducts);
   };
+  
 
   const handleDeleteProduct = async (productId) => {
     await deleteProduct(productId);
@@ -72,7 +110,7 @@ export default function StockManagementPage() {
             placeholder="Rechercher"
             className="w-full p-2 pl-4 pr-10 border border-stone-300 rounded-[22px]"
             value={searchTerm}
-            onChange={(e) => handleSearch(e.target.value)}  // Appel immédiat de la recherche
+            onChange={(e) => handleSearch(e.target.value)}
           />
           <svg
             xmlns="http://www.w3.org/2000/svg"
