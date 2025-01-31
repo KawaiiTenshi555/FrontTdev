@@ -33,15 +33,12 @@ export default function UserManagementPage() {
   };
 
   const handleSaveUser = async (formData) => {
-    console.log('formData', formData);
     
     try {
       if (editingUser) {
         await editUser(editingUser.id, formData);
-        console.log('Utilisateur modifié avec succès');
       } else {
         await addUser(formData);
-        console.log('Utilisateur ajouté avec succès');
       }
       const data = await getUsers();
       setUsers(data);

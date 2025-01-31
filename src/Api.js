@@ -199,7 +199,7 @@ const getProduct = async (id) => {
 // Fonction pour ajouter un nouveau produit
 const addProduct = async (productData) => {
   try {
-    const response = await fetch(`${BASE_URL}/api/products`, {
+    const response = await fetch(`${BASE_URL}/api/product/addProduct`, {
       method: "POST",
       headers: getHeaders(true), // Inclure le token si nécessaire
       body: JSON.stringify(productData),
@@ -213,7 +213,7 @@ const addProduct = async (productData) => {
         `Échec de l'ajout du produit : ${errorMsg || response.statusText}`,
       );
     }
-    return data.message;
+    return data;
   } catch (error) {
     console.error("Erreur lors de l'ajout du produit :", error);
     throw error;
@@ -274,11 +274,11 @@ const deleteProduct = async (id) => {
 };
 
 // Fonction pour mettre à jour le stock d'un produit
-const updateProductStock = async (id, stockData) => {
-  try {
-    const response = await fetch(`${BASE_URL}/api/products/${id}/stock`, {
-      method: "PATCH",
-      headers: getHeaders(true), // Inclure le token si nécessaire
+const addProductStock = async (stockData) => {
+  try {    
+    const response = await fetch(`${BASE_URL}/api/stock/create`, {
+      method: "POST",
+      headers: getHeaders(true),
       body: JSON.stringify(stockData),
     });
     const data = await response.json();
@@ -297,149 +297,60 @@ const updateProductStock = async (id, stockData) => {
   }
 };
 
-// Fonctions liées aux KPI (Key Performance Indicators)
-
-// Fonction pour obtenir la valeur moyenne du panier
-const getAverageCartValue = async () => {
+// Fonction pour mettre à jour le stock d'un produit
+const updateProductStock = async (id, stockData) => {
   try {
-    const response = await fetch(`${BASE_URL}/api/kpi/average-cart-value`, {
-      method: "GET",
-      headers: getHeaders(true), // Inclure le token si nécessaire
+    const response = await fetch(`${BASE_URL}/api/stock/edit?id=${id}`, {
+      method: "PATCH",
+      headers: getHeaders(true),
+      body: JSON.stringify(stockData),
     });
+    const data = await response.json();
     if (!response.ok) {
+      const errorMsg = Array.isArray(data.error)
+        ? data.error.join(", ")
+        : data.error;
       throw new Error(
-        `Échec de la récupération de la valeur moyenne du panier : ${response.statusText}`,
+        `Échec de la mise à jour du stock : ${errorMsg || response.statusText}`,
       );
     }
-    const data = await response.json();
-    return data.averageCartValue;
+    return data.message;
   } catch (error) {
-    console.error(
-      "Erreur lors de la récupération de la valeur moyenne du panier :",
-      error,
-    );
+    console.error("Erreur lors de la mise à jour du stock :", error);
     throw error;
   }
 };
 
-// Fonction pour obtenir le taux de rupture de stock
-const getStockOutRate = async () => {
-  try {
-    const response = await fetch(`${BASE_URL}/api/kpi/stock-out-rate`, {
-      method: "GET",
-      headers: getHeaders(true), // Inclure le token si nécessaire
-    });
-    if (!response.ok) {
-      throw new Error(
-        `Échec de la récupération du taux de rupture de stock : ${response.statusText}`,
-      );
-    }
-    const data = await response.json();
-    return data.stockOutRate;
-  } catch (error) {
-    console.error(
-      "Erreur lors de la récupération du taux de rupture de stock :",
-      error,
-    );
-    throw error;
-  }
-};
-
-// Fonction pour obtenir les produits les plus vendus
-const getTopSellingProducts = async (limit = 10) => {
-  try {
-    const response = await fetch(
-      `${BASE_URL}/api/kpi/top-selling-products?limit=${limit}`,
-      {
-        method: "GET",
-        headers: getHeaders(true), // Inclure le token si nécessaire
-      },
-    );
-    if (!response.ok) {
-      throw new Error(
-        `Échec de la récupération des produits les plus vendus : ${response.statusText}`,
-      );
-    }
-    const data = await response.json();
-    return data.topProducts;
-  } catch (error) {
-    console.error(
-      "Erreur lors de la récupération des produits les plus vendus :",
-      error,
-    );
-    throw error;
-  }
-};
-
-// Fonction pour obtenir les produits les moins vendus
-const getLowSellingProducts = async (limit = 10) => {
-  try {
-    const response = await fetch(
-      `${BASE_URL}/api/kpi/low-selling-products?limit=${limit}`,
-      {
-        method: "GET",
-        headers: getHeaders(true), // Inclure le token si nécessaire
-      },
-    );
-    if (!response.ok) {
-      throw new Error(
-        `Échec de la récupération des produits les moins vendus : ${response.statusText}`,
-      );
-    }
-    const data = await response.json();
-    return data.lowProducts;
-  } catch (error) {
-    console.error(
-      "Erreur lors de la récupération des produits les moins vendus :",
-      error,
-    );
-    throw error;
-  }
-};
-
-// Fonction pour obtenir le taux de conversion
-const getConversionRate = async () => {
-  try {
-    const response = await fetch(`${BASE_URL}/api/kpi/conversion-rate`, {
-      method: "GET",
-      headers: getHeaders(true), // Inclure le token si nécessaire
-    });
-    if (!response.ok) {
-      throw new Error(
-        `Échec de la récupération du taux de conversion : ${response.statusText}`,
-      );
-    }
-    const data = await response.json();
-    return data.conversionRate;
-  } catch (error) {
-    console.error(
-      "Erreur lors de la récupération du taux de conversion :",
-      error,
-    );
-    throw error;
-  }
-};
 const getProductByName = async (name) => {
-  console.log("getProductByName :", name);
-  
   try {
     const response = await fetch(
-      `${BASE_URL}/api/product/getProductsByName?productName=${name}`,
+      `${BASE_URL}/api/product/getProductsByName?productName=${encodeURIComponent(name)}`,
       {
         method: "GET",
         headers: getHeaders(),
       },
-    );
+    );    
+
+    if (response.status === 404) {
+      return [];
+    }
+
     if (!response.ok) {
       throw new Error(`getProductByName failed: ${response.statusText}`);
     }
+
     const data = await response.json();
     return data.message;
   } catch (error) {
-    console.error("Error during getProductByName:", error);
-    throw error;
+    if (error.message.includes("404")) {
+      return []; 
+    }
+    console.warn("Erreur lors de getProductByName:", error);
+    return [];
   }
 };
+
+
 
 const getKpi = async (endpoint) => {
   try {
@@ -491,12 +402,8 @@ export {
   addProduct,
   deleteProduct,
   editProduct,
+  addProductStock,
   updateProductStock,
-  getAverageCartValue,
-  getStockOutRate,
-  getTopSellingProducts,
-  getLowSellingProducts,
-  getConversionRate,
   getProductByName,
   fetchAverageBasketValue,
   fetchStockOutRate,

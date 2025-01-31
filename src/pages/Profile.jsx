@@ -60,7 +60,6 @@ export default function Profile() {
 
     try {
       const message = await editUser(token, formData);
-      console.log("Réponse API :", message);
       alert("Profil mis à jour avec succès !");
     } catch (err) {
       console.error("Erreur lors de la mise à jour du profil :", err);
