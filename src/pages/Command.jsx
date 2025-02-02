@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import CommandTable from "../components/CommandTable";
 import CommandModal from "../components/CommandModal";
+import { getOrders } from "../Api";
 
 export default function Command() {
   const [commands, setCommands] = useState([]);
@@ -10,8 +11,20 @@ export default function Command() {
   const [selectedCommand, setSelectedCommand] = useState(null);
 
   useEffect(() => {
-    const fakeData = generateFakeCommands();
-    setCommands(fakeData);
+    // const fakeData = generateFakeCommands();
+    // setCommands(fakeData);
+
+    const fetchOrders = async () => {
+      try {
+        const orders = await getOrders()
+        console.log(orders)
+        setCommands(orders)
+      } catch (err) {
+        console.error("Error fetching dashboard data:", err);
+      }
+    }
+    
+    fetchOrders()
   }, []);
 
   const generateFakeCommands = () => {
@@ -41,7 +54,7 @@ export default function Command() {
   };
 
   const filteredCommands = commands.filter((cmd) =>
-    cmd.email.toLowerCase().includes(searchTerm.toLowerCase()),
+    cmd.user.email.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   return (
@@ -84,7 +97,7 @@ export default function Command() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         // On passe le tableau "items" de la commande sélectionnée
-        items={selectedCommand?.items || []}
+        items={selectedCommand?.item || []}
       />
     </div>
   );

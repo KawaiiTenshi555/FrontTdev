@@ -369,6 +369,19 @@ const getKpi = async (endpoint) => {
   }
 };
 
+const getOrders = async () => {
+  try {
+    const response = await fetch(`${BASE_URL}/api/order`, {
+      method: "GET",
+      headers: getHeaders(true)
+    })
+    const data = await response.json()
+    return data
+  } catch (err) {
+    throw err.message
+  }
+}
+
 const fetchAverageBasketValue = async () => {
   return await getKpi("orderAvg");
 };
@@ -410,4 +423,5 @@ export {
   fetchConversionRate,
   fetchTopSellingProducts,
   fetchLeastSellingProducts,
+  getOrders
 };

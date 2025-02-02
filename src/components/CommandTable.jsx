@@ -1,7 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 
 const CommandTable = ({ commands, onDelete, onUpdate, onPending }) => {
+
+  const handleCommandStatus = (commandStatus) => {
+    switch(commandStatus) {
+      case "pending":
+        return "En cours"
+      break;
+      case "completed":
+        return "Payée"
+      break;
+      case "canceled":
+        return "Annulée"
+      break;
+      default:
+        return "Indéterminé"
+      break;
+    }
+  }
+
   return (
     <table className="w-full bg-stone-800 text-white rounded-lg shadow-lg overflow-hidden">
       <thead className="bg-stone-900">
@@ -22,14 +40,18 @@ const CommandTable = ({ commands, onDelete, onUpdate, onPending }) => {
             className="border-t border-stone-700 hover:bg-stone-700"
           >
             <td className="p-4">{command.id}</td>
-            <td className="p-4">{command.email}</td>
-            <td className="p-4">{command.price} e</td>
+            <td className="p-4">{command.user.email}</td>
+            <td className="p-4">{command.total_price}€</td>
             <td
               className={`p-4 font-bold ${
-                command.status === "Payer" ? "text-green-400" : "text-red-500"
-              }`}
+                command.status === "completed" 
+                ? "text-green-400" 
+                : command.status === "pending" 
+                ? "text-orange-400" 
+                : "text-red-500"
+            }`}
             >
-              {command.status}
+            {handleCommandStatus(command.status)}
             </td>
             <td className="p-4">
               <button

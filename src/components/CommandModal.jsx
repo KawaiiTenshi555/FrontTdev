@@ -19,8 +19,8 @@ function CommandModal({ isOpen, onClose, items = [] }) {
         <ul className="divide-y divide-gray-200 mb-4 text-gray-700">
           {items.map((item, index) => (
             <li key={index} className="py-2 flex justify-between">
-              <span>{item.name}</span>
-              <span>{item.price} €</span>
+              <span>{item.product.name}</span>
+              <span>{item.product.price}€</span>
             </li>
           ))}
         </ul>
