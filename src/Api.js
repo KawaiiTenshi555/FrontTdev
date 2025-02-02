@@ -1,6 +1,6 @@
 // src/Api.js
 
-const BASE_URL = "https://monapipersotdev.online/";
+const BASE_URL = "https://monapipersotdev.online";
 
 // Fonction pour obtenir les en-têtes de requête
 const getHeaders = (includeToken = false) => {
