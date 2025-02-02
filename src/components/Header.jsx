@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 const Header = () => {
   const location = useLocation();
 
   return (
-    <header className="fixed top-0 left-0 w-full z-50">
+    <>
+    {localStorage.getItem("jwt_token") ? (
+      <header className="fixed top-0 left-0 w-full z-50">
       <nav className="flex w-full">
         <Link
           to="/StockManagement"
@@ -59,6 +61,10 @@ const Header = () => {
         </Link>
       </nav>
     </header>
+    ) : (
+      <></>
+    )}
+    </>
   );
 };
 

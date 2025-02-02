@@ -40,8 +40,11 @@ export default function Login() {
   }, []);
 
   return (
-    <div className="flex h-screen items-center justify-center bg-gray-200">
-      <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-lg">
+    <div className="flex flex-col items-center justify-center">
+    <h1 className="text-3xl font-bold text-center text-gray-800 mb-20">
+          Shop Manager
+        </h1>
+      <div className="w-full max-w-md p-8 space-y-6 bg-gray-200 rounded-lg shadow-lg">
         <h2 className="text-2xl font-bold text-center text-gray-800">
           Connexion
         </h2>
@@ -61,6 +64,7 @@ export default function Login() {
               placeholder="Entrez votre adresse email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              required="required"
             />
           </div>
           <div>
@@ -78,6 +82,7 @@ export default function Login() {
               placeholder="Entrez votre mot de passe"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              required="required"
             />
           </div>
 
