@@ -1,6 +1,6 @@
 // src/Api.js
 
-const BASE_URL = "http://localhost:3000";
+const BASE_URL = "http://51.38.81.136:3000";
 
 // Fonction pour obtenir les en-têtes de requête
 const getHeaders = (includeToken = false) => {
