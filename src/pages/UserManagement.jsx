@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getUsers, deleteUser, editUser, addUser } from '../Api';
-import UserTable from '../components/UserTable';
-import UserModal from '../components/UserModal';
+import UserTable from '../components/userTable';
+import UserModal from '../components/userModal';
 
 export default function UserManagementPage() {
   const [users, setUsers] = useState([]);
