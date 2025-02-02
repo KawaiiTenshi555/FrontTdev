@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import CommandTable from "../components/CommandTable";
 import CommandModal from "../components/CommandModal";
-import { getOrders } from "../Api";
+import { deleteOrder, getOrders } from "../Api";
 
 export default function Command() {
   const [commands, setCommands] = useState([]);
@@ -44,8 +44,11 @@ export default function Command() {
     return randomCommands;
   };
 
-  const handleDeleteCommand = (commandId) => {
-    setCommands((prev) => prev.filter((cmd) => cmd.id !== commandId));
+  const handleDeleteCommand = async (commandId) => {
+    if (confirm(`Voulez vous vraiment supprimer la commande n°${commandId} ?`)) {
+      await deleteOrder(commandId)
+      setCommands((prev) => prev.filter((cmd) => cmd.id !== commandId));
+    }
   };
 
   const handleUpdateCommand = (command) => {

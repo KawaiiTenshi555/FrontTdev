@@ -81,14 +81,14 @@ export default function Profile() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <p className="text-gray-700">Chargement du profil...</p>
+        <p className="text-stone-700">Chargement du profil...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-      <div className="w-full max-w-3xl bg-gray-800 text-white rounded-lg p-6 shadow-md">
+    <div className="min-h-screen bg-stone-100 flex items-center justify-center p-4">
+      <div className="w-full max-w-3xl bg-stone-800 text-white rounded-lg p-6 shadow-md">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-semibold">
@@ -112,13 +112,13 @@ export default function Profile() {
           {/* First Name / Last Name */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
             <div>
-              <label htmlFor="firstName" className="block text-gray-300 mb-1">
+              <label htmlFor="firstName" className="block text-stone-300 mb-1">
                 Nom
               </label>
               <input
                 type="text"
                 id="firstName"
-                className="w-full p-2 bg-gray-700 rounded focus:outline-none"
+                className="w-full p-2 bg-stone-700 rounded focus:outline-none"
                 placeholder="Nom"
                 value={formData.firstName}
                 onChange={handleChange}
@@ -126,13 +126,13 @@ export default function Profile() {
               />
             </div>
             <div>
-              <label htmlFor="lastName" className="block text-gray-300 mb-1">
+              <label htmlFor="lastName" className="block text-stone-300 mb-1">
                 Prénom
               </label>
               <input
                 type="text"
                 id="lastName"
-                className="w-full p-2 bg-gray-700 rounded focus:outline-none"
+                className="w-full p-2 bg-stone-700 rounded focus:outline-none"
                 placeholder="Prénom"
                 value={formData.lastName}
                 onChange={handleChange}
@@ -143,13 +143,13 @@ export default function Profile() {
 
           {/* Phone */}
           <div className="mb-4">
-            <label htmlFor="phone" className="block text-gray-300 mb-1">
+            <label htmlFor="phone" className="block text-stone-300 mb-1">
               Téléphone
             </label>
             <input
               type="text"
               id="phone"
-              className="w-full p-2 bg-gray-700 rounded focus:outline-none"
+              className="w-full p-2 bg-stone-700 rounded focus:outline-none"
               placeholder="0102030405"
               value={formData.phone}
               onChange={handleChange}
@@ -158,13 +158,13 @@ export default function Profile() {
 
           {/* Address */}
           <div className="mb-4">
-            <label htmlFor="address" className="block text-gray-300 mb-1">
+            <label htmlFor="address" className="block text-stone-300 mb-1">
               Adresse
             </label>
             <input
               type="text"
               id="address"
-              className="w-full p-2 bg-gray-700 rounded focus:outline-none"
+              className="w-full p-2 bg-stone-700 rounded focus:outline-none"
               placeholder="Adresse"
               value={formData.address}
               onChange={handleChange}
@@ -174,39 +174,39 @@ export default function Profile() {
           {/* ZIPCode / City / Country */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label htmlFor="ZIPCode" className="block text-gray-300 mb-1">
+              <label htmlFor="ZIPCode" className="block text-stone-300 mb-1">
                 Code Postal
               </label>
               <input
                 type="text"
                 id="ZIPCode"
-                className="w-full p-2 bg-gray-700 rounded focus:outline-none"
+                className="w-full p-2 bg-stone-700 rounded focus:outline-none"
                 placeholder="35400"
                 value={formData.ZIPCode}
                 onChange={handleChange}
               />
             </div>
             <div>
-              <label htmlFor="city" className="block text-gray-300 mb-1">
+              <label htmlFor="city" className="block text-stone-300 mb-1">
                 Ville
               </label>
               <input
                 type="text"
                 id="city"
-                className="w-full p-2 bg-gray-700 rounded focus:outline-none"
+                className="w-full p-2 bg-stone-700 rounded focus:outline-none"
                 placeholder="Ville"
                 value={formData.city}
                 onChange={handleChange}
               />
             </div>
             <div>
-              <label htmlFor="country" className="block text-gray-300 mb-1">
+              <label htmlFor="country" className="block text-stone-300 mb-1">
                 Pays
               </label>
               <input
                 type="text"
                 id="country"
-                className="w-full p-2 bg-gray-700 rounded focus:outline-none"
+                className="w-full p-2 bg-stone-700 rounded focus:outline-none"
                 placeholder="Pays"
                 value={formData.country}
                 onChange={handleChange}

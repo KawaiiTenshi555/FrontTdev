@@ -382,6 +382,19 @@ const getOrders = async () => {
   }
 }
 
+const deleteOrder = async (id) => {
+  try {
+    const response = await fetch(`${BASE_URL}/api/order/delete?id=${id}`, {
+      method: "DELETE",
+      headers: getHeaders(true)
+    })
+    const data = await response.json()
+    return data
+  } catch (err) {
+    throw err.message
+  }
+}
+
 const fetchAverageBasketValue = async () => {
   return await getKpi("orderAvg");
 };
@@ -423,5 +436,6 @@ export {
   fetchConversionRate,
   fetchTopSellingProducts,
   fetchLeastSellingProducts,
-  getOrders
+  getOrders,
+  deleteOrder
 };

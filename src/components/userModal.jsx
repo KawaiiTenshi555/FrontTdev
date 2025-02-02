@@ -56,7 +56,7 @@ const UserModal = ({ isOpen, onClose, user, onSave }) => {
     try {
       // Appeler la fonction `onSave` avec uniquement les champs modifiés
       await onSave(modifiedFields);
-      onClose();s
+      onClose();
     } catch (err) {
       setError(err.message || "Une erreur est survenue.");
       console.error("Erreur lors de l'ajout/modification de l'utilisateur :", err);

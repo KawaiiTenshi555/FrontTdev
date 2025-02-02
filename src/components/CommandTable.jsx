@@ -30,7 +30,6 @@ const CommandTable = ({ commands, onDelete, onUpdate, onPending }) => {
           <th className="p-4 text-left">Statut</th>
           <th className="p-4 text-left">Détails</th>
           <th className="p-4 text-left">Supprimer</th>
-          <th className="p-4 text-left">Annuler la commande</th>
         </tr>
       </thead>
       <tbody>
@@ -64,14 +63,6 @@ const CommandTable = ({ commands, onDelete, onUpdate, onPending }) => {
             <td className="p-4">
               <button
                 onClick={() => onDelete(command.id)}
-                className="text-white hover:text-red-400"
-              >
-                <FaTrashAlt />
-              </button>
-            </td>
-            <td className="p-4">
-              <button
-                onClick={() => onPending(command.id)}
                 className="text-white hover:text-red-400"
               >
                 <FaTrashAlt />
